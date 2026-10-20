@@ -34,6 +34,8 @@ CHAVE = ["SG_UF", "CD_MUNICIPIO", "NM_MUNICIPIO", "NR_ZONA", "NR_SECAO"]
 LOCAL = ["NR_LOCAL_VOTACAO", "NM_LOCAL_VOTACAO", "DS_ENDERECO", "NM_BAIRRO", "NR_CEP",
          "NR_LATITUDE", "NR_LONGITUDE"]
 TIPO = ["CD_TIPO_SECAO_AGREGADA", "DS_TIPO_SECAO_AGREGADA", "NR_SECAO_PRINCIPAL"]
+# um local de votação: o número do local é único dentro da zona
+LOCAL_1T = ["SG_UF", "CD_MUNICIPIO", "NR_ZONA", "NR_LOCAL_VOTACAO_1T"]
 
 # Nulos (#NULO / -1 = em branco) e não registrados (#NE / -3), além de campos vazios
 NULOS = ["#NULO", "#NE", "-1", "-3"]
@@ -213,21 +215,30 @@ def main(caminho, nome_freeze):
     print(f"  sem a seção no eleitorado (sem local/coordenada do 1º turno): {sem_1t}")
     print("  local do 2º turno:", origem.to_dict())
 
+    # locais alterados como o TSE conta: locais do 1º turno distintos (nº do local na zona),
+    # não endereços — dois números de local no mesmo prédio contam dois
+    locais = mud.drop_duplicates(LOCAL_1T)
+    print(f"  locais de votação alterados (locais do 1º turno): {len(locais):,}")
     por_uf = mud.groupby("SG_UF").size()
+    locais_uf = locais.groupby("SG_UF").size()
     por_mun = mud.groupby(["SG_UF", "NM_MUNICIPIO"]).size().sort_values(ascending=False)
+    locais_mun = locais.groupby(["SG_UF", "NM_MUNICIPIO"]).size()
     resumo["mudancas"] = {
         "fonte": arquivo,
         "lista_gerada_tse": gerada,
         "total": len(mud),
+        "locais": len(locais),
         "local": len(mud),
         "sem_secao_eleitorado": sem_1t,
         "local_2t": {k: int(v) for k, v in origem.items()},
         "por_uf": [
-            {"uf": uf, "local": int(n), "endereco": 0, "secoes_uf": int(secoes_uf.get(uf, 0))}
+            {"uf": uf, "local": int(n), "locais": int(locais_uf[uf]), "endereco": 0,
+             "secoes_uf": int(secoes_uf.get(uf, 0))}
             for uf, n in por_uf.sort_values(ascending=False).items()
         ],
         "top_municipios": [
-            {"uf": uf, "municipio": mun, "secoes": int(n)} for (uf, mun), n in por_mun.head(15).items()
+            {"uf": uf, "municipio": mun, "secoes": int(n), "locais": int(locais_mun[(uf, mun)])}
+            for (uf, mun), n in por_mun.head(15).items()
         ],
     }
     (SAIDA / "resumo.json").write_text(json.dumps(resumo, ensure_ascii=False, indent=2), encoding="utf-8")

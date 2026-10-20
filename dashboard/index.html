@@ -133,6 +133,11 @@
       <div class="sx-sub">de <span data-source="totais" data-field="eleitores_1t" data-row="0">—</span> eleitores aptos</div>
     </div>
     <div class="sx-card">
+      <div class="sx-label">Locais de votação com alteração para o 2º turno</div>
+      <div class="sx-big dash-skeleton" data-source="totais" data-field="locais_mudancas" data-row="0">—</div>
+      <div class="sx-sub">locais do 1º turno com seções que mudaram de local</div>
+    </div>
+    <div class="sx-card">
       <div class="sx-label">Seções que mudaram de local para o 2º turno</div>
       <div class="sx-big dash-skeleton" data-source="totais" data-field="mudancas" data-row="0">—</div>
       <div class="sx-sub"><span data-source="totais" data-field="eleitores_mudancas" data-row="0">—</span> eleitores · lista oficial do TSE</div>
@@ -171,6 +176,7 @@
             <thead><tr>
               <th data-field="uf">UF</th>
               <th data-field="municipio">Município</th>
+              <th data-field="locais" class="num">Locais</th>
               <th data-field="secoes" class="num">Seções</th>
               <th data-field="eleitores" class="num">Eleitores</th>
             </tr></thead>
@@ -219,6 +225,7 @@
         <ul class="sx-method">
           <li>As seções alteradas são as da lista oficial do TSE (<code>secoes_eleitorais_alteradas_2t-pais_2026</code>), que o tribunal atualiza ao longo do dia. Vale a lista do freeze escolhido no topo (por padrão, o mais recente).</li>
           <li>A lista traz UF, município, zona, seção, o nome do local inicial e do final e o número de eleitores. Ela é cruzada com o eleitorado por UF, município, zona e seção para obter o código do município e o endereço e as coordenadas do local do 1º turno.</li>
+          <li><b>Locais de votação com alteração</b>: os locais do 1º turno distintos entre as seções alteradas, identificados por município, zona e número do local (<code>NR_LOCAL_VOTACAO</code>), como o TSE conta. Não é uma contagem de endereços: um prédio com dois números de local conta dois.</li>
           <li><b>Local do 2º turno</b>: endereço e coordenadas vêm da linha do 2º turno da seção no eleitorado quando o nome do local é o mesmo da lista; senão, de um local com o mesmo nome no município. Os nomes são comparados sem acentos e sem pontuação, porque a lista troca o ponto por vírgula (“E, M,” por “E. M.”).</li>
           <li>Quando o local final não é encontrado, ou não tem coordenada no cadastro, a seção fica sem coordenada do 2º turno.</li>
         </ul>
@@ -457,17 +464,19 @@
   dash.calc("top_municipios", {
     inputs: ["mudancas"],
     title: "Municípios com mais mudanças",
-    description: "Seções alteradas entre turnos contadas por município (e seus eleitores), as 15 maiores.",
+    description: "Seções alteradas entre turnos contadas por município (com seus locais do 1º turno e eleitores), as 15 maiores.",
     fn: (mudancas) => {
       const m = new Map();
       for (const r of mudancas) {
         const k = r.uf + "|" + r.municipio;
-        const o = m.get(k) || { uf: r.uf, municipio: r.municipio, secoes: 0, eleitores: 0 };
+        const o = m.get(k) || { uf: r.uf, municipio: r.municipio, secoes: 0, eleitores: 0, _locais: new Set() };
         o.secoes++;
         o.eleitores += Number(r.eleitores) || 0;
+        o._locais.add(r.zona + "|" + r.nr_local_1t);
         m.set(k, o);
       }
-      return [...m.values()].sort((a, b) => b.secoes - a.secoes || a.municipio.localeCompare(b.municipio)).slice(0, 15);
+      return [...m.values()].map(({ _locais, ...o }) => ({ ...o, locais: _locais.size }))
+        .sort((a, b) => b.secoes - a.secoes || a.municipio.localeCompare(b.municipio)).slice(0, 15);
     }
   });
 </script>
@@ -563,7 +572,8 @@
       resumo.append(
         mk("totais", "agregadas", fN, r.agregadas), " seções foram agregadas no 1º turno (",
         mk("pct_agregadas", "pct", fP, p.data[0].pct), " do total). Para o 2º turno, ",
-        mk("totais", "mudancas", fN, r.mudancas), " seções mudaram de local, com ",
+        mk("totais", "mudancas", fN, r.mudancas), " seções de ",
+        mk("totais", "locais_mudancas", fN, r.locais_mudancas), " locais de votação mudaram de local, com ",
         mk("totais", "eleitores_mudancas", fN, r.eleitores_mudancas), " eleitores, segundo a lista oficial do TSE desse freeze."
       );
     } else if (t.status === "error") { fail(resumo); }
@@ -578,7 +588,7 @@
       const rowsM = u.data.filter(r => Number(r.mud_total) > 0).sort((a, b) => Number(b.mud_total) - Number(a.mud_total));
       hbars(chM, rowsM, [{ key: "mud_total", color: cols[0] }],
         r => fN(Number(r.mud_total)),
-        r => [`${fN(Number(r.mud_total))} seções mudaram de local`, `${fN(Number(r.eleitores_mud))} eleitores`]);
+        r => [`${fN(Number(r.mud_total))} seções mudaram de local`, `${fN(Number(r.mud_locais))} locais de votação`, `${fN(Number(r.eleitores_mud))} eleitores`]);
     } else if (u.status === "error") { fail(chA); fail(chM); }
     else { chA.textContent = ""; chM.textContent = ""; chA.classList.add("dash-skeleton"); chM.classList.add("dash-skeleton"); }
 
@@ -588,12 +598,12 @@
     if (tm.status === "ok") {
       for (const r of tm.data) {
         const tr = tbM.insertRow();
-        [[r.uf], [r.municipio], [fN(r.secoes), "num"], [fN(r.eleitores), "num"]].forEach(([v, c]) => {
+        [[r.uf], [r.municipio], [fN(r.locais), "num"], [fN(r.secoes), "num"], [fN(r.eleitores), "num"]].forEach(([v, c]) => {
           const td = tr.insertCell(); td.textContent = v; if (c) td.className = c;
         });
       }
     } else if (tm.status === "error") {
-      const td = tbM.insertRow().insertCell(); td.colSpan = 4; fail(td);
+      const td = tbM.insertRow().insertCell(); td.colSpan = 5; fail(td);
     }
 
     window.sxDrawList && window.sxDrawList();

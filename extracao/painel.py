@@ -20,6 +20,7 @@ import sys
 import pandas as pd
 
 import freeze
+from secoes_tse_2026 import LOCAL_1T
 
 CHAVE_ID = ["SG_UF", "CD_MUNICIPIO", "NR_ZONA", "NR_SECAO"]
 
@@ -45,6 +46,8 @@ def main(nome_freeze):
     mud["id"] = mud[CHAVE_ID].astype(str).agg("-".join, axis=1)
     mud["eleitores"] = pd.to_numeric(mud["QT_ELEITORES_LISTA"]).astype("Int64")
     sem_coord_2t = int(coordenada(mud["NR_LATITUDE_2T"]).isna().sum())
+    # locais alterados como o TSE conta (ver secoes_tse_2026.LOCAL_1T)
+    mud["local_id"] = mud[LOCAL_1T].astype(str).agg("-".join, axis=1)
 
     ag = resumo["agregadas"]
     pd.DataFrame([{
@@ -53,17 +56,21 @@ def main(nome_freeze):
         "agregadas": ag["total"],
         "eleitores_agregadas": ag["eleitores"],
         "mudancas": len(mud),
+        "locais_mudancas": mud["local_id"].nunique(),
         "eleitores_mudancas": int(mud["eleitores"].sum()),
         "sem_coord_2t": sem_coord_2t,
     }]).to_csv(destino / "totais.csv", index=False)
 
     agreg_uf = pd.DataFrame(ag["por_uf"]).rename(columns={"secoes": "agregadas", "eleitores": "eleitores_agregadas"})
-    mud_uf = mud.groupby("SG_UF").agg(mud_total=("id", "size"), eleitores_mud=("eleitores", "sum")).reset_index()
+    mud_uf = mud.groupby("SG_UF").agg(mud_total=("id", "size"), mud_locais=("local_id", "nunique"),
+                                      eleitores_mud=("eleitores", "sum")).reset_index()
     por_uf = (agreg_uf.merge(mud_uf.rename(columns={"SG_UF": "uf"}), on="uf", how="outer")
-              .fillna({"agregadas": 0, "eleitores_agregadas": 0, "mud_total": 0, "eleitores_mud": 0}))
+              .fillna({"agregadas": 0, "eleitores_agregadas": 0, "mud_total": 0, "mud_locais": 0, "eleitores_mud": 0}))
     por_uf["pct_agregadas"] = (por_uf["agregadas"] / por_uf["secoes_uf"]).round(4)
-    por_uf[["uf", "secoes_uf", "agregadas", "pct_agregadas", "eleitores_agregadas", "mud_total", "eleitores_mud"]] \
-        .astype({"agregadas": int, "eleitores_agregadas": int, "mud_total": int, "eleitores_mud": int}) \
+    por_uf[["uf", "secoes_uf", "agregadas", "pct_agregadas", "eleitores_agregadas", "mud_total", "mud_locais",
+            "eleitores_mud"]] \
+        .astype({"agregadas": int, "eleitores_agregadas": int, "mud_total": int, "mud_locais": int,
+                 "eleitores_mud": int}) \
         .sort_values("agregadas", ascending=False).to_csv(destino / "por_uf.csv", index=False)
 
     base = pd.DataFrame({
@@ -71,7 +78,7 @@ def main(nome_freeze):
         "zona": mud["NR_ZONA"], "secao": mud["NR_SECAO"], "motivo": "Local",
     })
     pd.concat([base, pd.DataFrame({
-        "local_1t": mud["NM_LOCAL_VOTACAO_1T"], "local_2t": mud["NM_LOCAL_VOTACAO_2T"],
+        "nr_local_1t": mud["NR_LOCAL_VOTACAO_1T"], "local_1t": mud["NM_LOCAL_VOTACAO_1T"], "local_2t": mud["NM_LOCAL_VOTACAO_2T"],
         "endereco_2t": mud["DS_ENDERECO_2T"], "eleitores": mud["eleitores"],
         "origem_local_2t": mud["ORIGEM_LOCAL_2T"],
     })], axis=1).to_csv(destino / "mudancas.csv", index=False)

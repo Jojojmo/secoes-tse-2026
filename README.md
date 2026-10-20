@@ -102,9 +102,9 @@ uv run python -m http.server -d dashboard 8000   # http://localhost:8000/
 
 | Arquivo | Conteúdo |
 |---|---|
-| `totais.csv` | totais nacionais: seções e eleitores do 1º turno, agregadas, seções alteradas, sem coordenada no 2º turno |
-| `por_uf.csv` | agregadas e seções alteradas por UF |
-| `mudancas.csv` | uma linha por seção alterada, com os locais dos dois turnos |
+| `totais.csv` | totais nacionais: seções e eleitores do 1º turno, agregadas, seções alteradas, locais de votação alterados, sem coordenada no 2º turno |
+| `por_uf.csv` | agregadas, seções alteradas e locais de votação alterados por UF |
+| `mudancas.csv` | uma linha por seção alterada, com os locais dos dois turnos (e o nº do local do 1º turno) |
 | `votos_mapa.csv` | seções alteradas com coordenadas dos dois turnos e votos por candidato (`v<número>`) |
 | `candidatos.csv` | número e nome de cada candidato, mais 95 (branco) e 96 (nulo) |
 | `resumo.json` | totais, por UF e municípios com mais mudanças, data de geração da lista |
@@ -131,6 +131,9 @@ uv run python -m http.server -d dashboard 8000   # http://localhost:8000/
   local com o mesmo nome no município (`mesmo_nome_no_municipio`); senão ficam vazios
   (`nao_encontrado`). Os nomes são comparados sem acento e sem pontuação, porque a lista
   troca `.` por `,` (`E, M, JOAO GOULART`).
+- **Locais de votação alterados** = locais do 1º turno distintos entre as seções alteradas
+  (município + zona + `NR_LOCAL_VOTACAO`), a mesma conta do TSE na página Capilaridade. Não é
+  por endereço: um prédio com dois números de local conta dois.
 - A data de geração da lista só é conhecida no formato zipado; com o CSV da Capilaridade fica vazia.
 - O contorno dos estados (`dashboard/static/ufs.json`) vem do `brazil-states.geojson` do projeto
   [click_that_hood](https://github.com/codeforgermany/click_that_hood), simplificado.
