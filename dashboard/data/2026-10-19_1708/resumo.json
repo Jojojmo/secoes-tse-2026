@@ -1,0 +1,405 @@
+{
+  "freeze": "2026-10-19_1708",
+  "coletado_em": "2026-10-19T17:08:00-03:00",
+  "gerado_em": "18/10/2026 20:27:31",
+  "secoes_1t": 517179,
+  "secoes_2t": 517179,
+  "eleitores_1t": 158745463,
+  "agregadas": {
+    "total": 17931,
+    "eleitores": 2494959,
+    "por_uf": [
+      {
+        "uf": "BA",
+        "secoes": 2474,
+        "eleitores": 331391,
+        "secoes_uf": 37950
+      },
+      {
+        "uf": "MG",
+        "secoes": 2131,
+        "eleitores": 269793,
+        "secoes_uf": 54193
+      },
+      {
+        "uf": "CE",
+        "secoes": 1885,
+        "eleitores": 223120,
+        "secoes_uf": 25650
+      },
+      {
+        "uf": "MA",
+        "secoes": 1701,
+        "eleitores": 205348,
+        "secoes_uf": 19794
+      },
+      {
+        "uf": "ZZ",
+        "secoes": 1364,
+        "eleitores": 451825,
+        "secoes_uf": 2715
+      },
+      {
+        "uf": "PA",
+        "secoes": 1255,
+        "eleitores": 142307,
+        "secoes_uf": 22082
+      },
+      {
+        "uf": "RJ",
+        "secoes": 1063,
+        "eleitores": 142583,
+        "secoes_uf": 38738
+      },
+      {
+        "uf": "PI",
+        "secoes": 1036,
+        "eleitores": 105061,
+        "secoes_uf": 11261
+      },
+      {
+        "uf": "MT",
+        "secoes": 688,
+        "eleitores": 92239,
+        "secoes_uf": 8975
+      },
+      {
+        "uf": "PE",
+        "secoes": 673,
+        "eleitores": 95138,
+        "secoes_uf": 22091
+      },
+      {
+        "uf": "GO",
+        "secoes": 540,
+        "eleitores": 82802,
+        "secoes_uf": 16226
+      },
+      {
+        "uf": "AM",
+        "secoes": 420,
+        "eleitores": 55417,
+        "secoes_uf": 8577
+      },
+      {
+        "uf": "ES",
+        "secoes": 279,
+        "eleitores": 33256,
+        "secoes_uf": 10123
+      },
+      {
+        "uf": "SP",
+        "secoes": 248,
+        "eleitores": 24103,
+        "secoes_uf": 103904
+      },
+      {
+        "uf": "RO",
+        "secoes": 243,
+        "eleitores": 29667,
+        "secoes_uf": 4941
+      },
+      {
+        "uf": "SC",
+        "secoes": 232,
+        "eleitores": 28518,
+        "secoes_uf": 17558
+      },
+      {
+        "uf": "RN",
+        "secoes": 221,
+        "eleitores": 22817,
+        "secoes_uf": 8336
+      },
+      {
+        "uf": "PR",
+        "secoes": 194,
+        "eleitores": 15817,
+        "secoes_uf": 27336
+      },
+      {
+        "uf": "RS",
+        "secoes": 191,
+        "eleitores": 16794,
+        "secoes_uf": 27738
+      },
+      {
+        "uf": "MS",
+        "secoes": 178,
+        "eleitores": 22902,
+        "secoes_uf": 7284
+      },
+      {
+        "uf": "AL",
+        "secoes": 145,
+        "eleitores": 18104,
+        "secoes_uf": 7246
+      },
+      {
+        "uf": "SE",
+        "secoes": 144,
+        "eleitores": 18272,
+        "secoes_uf": 6067
+      },
+      {
+        "uf": "AC",
+        "secoes": 141,
+        "eleitores": 16065,
+        "secoes_uf": 2411
+      },
+      {
+        "uf": "PB",
+        "secoes": 133,
+        "eleitores": 13922,
+        "secoes_uf": 10845
+      },
+      {
+        "uf": "RR",
+        "secoes": 108,
+        "eleitores": 10351,
+        "secoes_uf": 1627
+      },
+      {
+        "uf": "TO",
+        "secoes": 106,
+        "eleitores": 8763,
+        "secoes_uf": 4490
+      },
+      {
+        "uf": "DF",
+        "secoes": 81,
+        "eleitores": 11241,
+        "secoes_uf": 7050
+      },
+      {
+        "uf": "AP",
+        "secoes": 57,
+        "eleitores": 7343,
+        "secoes_uf": 1971
+      }
+    ]
+  },
+  "mudancas": {
+    "fonte": "secoes_eleitorais_alteradas_2t-pais_2026.csv.zip",
+    "lista_gerada_tse": "19/10/2026 15:30:30",
+    "total": 444,
+    "local": 444,
+    "sem_secao_eleitorado": 0,
+    "local_2t": {
+      "secao_2t": 343,
+      "mesmo_nome_no_municipio": 54,
+      "nao_encontrado": 47
+    },
+    "por_uf": [
+      {
+        "uf": "MG",
+        "local": 106,
+        "endereco": 0,
+        "secoes_uf": 54193
+      },
+      {
+        "uf": "PR",
+        "local": 58,
+        "endereco": 0,
+        "secoes_uf": 27336
+      },
+      {
+        "uf": "AP",
+        "local": 38,
+        "endereco": 0,
+        "secoes_uf": 1971
+      },
+      {
+        "uf": "PA",
+        "local": 37,
+        "endereco": 0,
+        "secoes_uf": 22082
+      },
+      {
+        "uf": "MA",
+        "local": 37,
+        "endereco": 0,
+        "secoes_uf": 19794
+      },
+      {
+        "uf": "SP",
+        "local": 30,
+        "endereco": 0,
+        "secoes_uf": 103904
+      },
+      {
+        "uf": "PI",
+        "local": 24,
+        "endereco": 0,
+        "secoes_uf": 11261
+      },
+      {
+        "uf": "RN",
+        "local": 24,
+        "endereco": 0,
+        "secoes_uf": 8336
+      },
+      {
+        "uf": "RS",
+        "local": 19,
+        "endereco": 0,
+        "secoes_uf": 27738
+      },
+      {
+        "uf": "RO",
+        "local": 11,
+        "endereco": 0,
+        "secoes_uf": 4941
+      },
+      {
+        "uf": "CE",
+        "local": 9,
+        "endereco": 0,
+        "secoes_uf": 25650
+      },
+      {
+        "uf": "MT",
+        "local": 8,
+        "endereco": 0,
+        "secoes_uf": 8975
+      },
+      {
+        "uf": "PE",
+        "local": 8,
+        "endereco": 0,
+        "secoes_uf": 22091
+      },
+      {
+        "uf": "PB",
+        "local": 8,
+        "endereco": 0,
+        "secoes_uf": 10845
+      },
+      {
+        "uf": "ES",
+        "local": 7,
+        "endereco": 0,
+        "secoes_uf": 10123
+      },
+      {
+        "uf": "BA",
+        "local": 7,
+        "endereco": 0,
+        "secoes_uf": 37950
+      },
+      {
+        "uf": "AM",
+        "local": 6,
+        "endereco": 0,
+        "secoes_uf": 8577
+      },
+      {
+        "uf": "SE",
+        "local": 2,
+        "endereco": 0,
+        "secoes_uf": 6067
+      },
+      {
+        "uf": "TO",
+        "local": 2,
+        "endereco": 0,
+        "secoes_uf": 4490
+      },
+      {
+        "uf": "AL",
+        "local": 1,
+        "endereco": 0,
+        "secoes_uf": 7246
+      },
+      {
+        "uf": "GO",
+        "local": 1,
+        "endereco": 0,
+        "secoes_uf": 16226
+      },
+      {
+        "uf": "MS",
+        "local": 1,
+        "endereco": 0,
+        "secoes_uf": 7284
+      }
+    ],
+    "top_municipios": [
+      {
+        "uf": "AP",
+        "municipio": "SANTANA",
+        "secoes": 21
+      },
+      {
+        "uf": "MA",
+        "municipio": "SANTA INÊS",
+        "secoes": 13
+      },
+      {
+        "uf": "MG",
+        "municipio": "JANUÁRIA",
+        "secoes": 13
+      },
+      {
+        "uf": "SP",
+        "municipio": "SÃO PAULO",
+        "secoes": 12
+      },
+      {
+        "uf": "SP",
+        "municipio": "PRESIDENTE PRUDENTE",
+        "secoes": 12
+      },
+      {
+        "uf": "PR",
+        "municipio": "LARANJEIRAS DO SUL",
+        "secoes": 12
+      },
+      {
+        "uf": "MG",
+        "municipio": "UBÁ",
+        "secoes": 11
+      },
+      {
+        "uf": "MG",
+        "municipio": "IAPU",
+        "secoes": 11
+      },
+      {
+        "uf": "PR",
+        "municipio": "FRANCISCO ALVES",
+        "secoes": 10
+      },
+      {
+        "uf": "RO",
+        "municipio": "PORTO VELHO",
+        "secoes": 10
+      },
+      {
+        "uf": "MG",
+        "municipio": "CALDAS",
+        "secoes": 9
+      },
+      {
+        "uf": "MG",
+        "municipio": "CARATINGA",
+        "secoes": 9
+      },
+      {
+        "uf": "PI",
+        "municipio": "GUADALUPE",
+        "secoes": 9
+      },
+      {
+        "uf": "PA",
+        "municipio": "SÃO GERALDO DO ARAGUAIA",
+        "secoes": 9
+      },
+      {
+        "uf": "RN",
+        "municipio": "CARAÚBAS",
+        "secoes": 8
+      }
+    ]
+  }
+}
