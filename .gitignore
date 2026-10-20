@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+# extração: dados brutos do TSE (~1 GB) e intermediários (CSVs de detalhe).
+# O que alimenta o painel (resumo.json, agregadas_uf/*.json, CSVs do painel e
+# freezes.csv) é publicado pelo painel.py em dashboard/data/ e é versionado.
+extracao/dados/
+extracao/saida/
