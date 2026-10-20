@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seções TSE 2026</title>
+<meta name="description" content="Seções eleitorais agregadas no 1º turno e seções que mudaram de local para o 2º turno de 2026, segundo a lista oficial do TSE.">
+<link rel="stylesheet" href="estilo.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+</head>
+<body>
+<header class="dash-bar">
+  <span class="dash-titulo">Seções TSE 2026</span>
+  <label class="dash-freeze">Freeze <select id="freeze-sel" aria-label="Freeze da lista oficial"><option>carregando…</option></select></label>
+</header>
+<main id="dash-root">
+<script src="dash.js"></script>
+<style>
+  .sx { font-family: var(--font-anthropic-sans); color: var(--color-fg); display: grid; gap: var(--cds-gap-xl); max-width: 76rem; margin-inline: auto; }
+  .sx-head { display: grid; gap: var(--cds-gap-xs); }
+  .sx-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .sx-head p { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 62ch; }
+  .sx-head .sx-stamp { font-size: var(--cds-font-size-caption); }
+  .sx-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+  .sx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); align-content: start; min-width: 0; }
+  .sx-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
+  .sx-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; min-height: 1.1em; }
+  .sx-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .sx-section { display: grid; gap: var(--cds-gap-md); }
+  .sx-section > h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .sx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+  .sx-card h3 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .sx-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .sx-chart { position: relative; min-height: 640px; }
+  .sx-chart svg { display: block; }
+  .sx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .sx-legend span { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
+  .sx-legend i { width: .625rem; height: .625rem; border-radius: 2px; display: inline-block; }
+  .sx-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; z-index: 2; }
+  .sx-tip .sx-tip-h { color: var(--cds-text-secondary); }
+  .sx-tablebox { max-height: 30rem; overflow: auto; }
+  .sx-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .sx-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .sx-table th button { all: unset; cursor: pointer; }
+  .sx-table th button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .sx-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .sx-table .num { text-align: right; }
+  .sx-pill { display: inline-block; padding: 0 var(--cds-pad-xs); border-radius: 999px; border: 1px solid var(--color-border-line); white-space: nowrap; }
+  .sx-search { font: inherit; font-size: var(--cds-font-size-body); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); width: min(100%, 22rem); }
+  .sx-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: inherit; }
+  .sx-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+  .sx-method { margin: 0; padding-left: 1.2em; display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-body); max-width: 70ch; }
+  [data-dash-source-state=empty] { color: transparent; }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  @media (max-width: 40rem) { .sx-hide-narrow { display: none; } }
+  .sx-tabs { display: flex; gap: var(--cds-gap-sm); border-bottom: 1px solid var(--color-border-line); }
+  .sx-tab { all: unset; cursor: pointer; padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-body); color: var(--color-fg-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .sx-tab[aria-selected=true] { color: var(--color-fg); border-bottom-color: var(--color-fg); }
+  .sx-tab:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .sx-pg { display: grid; gap: var(--cds-gap-xl); }
+  .sx-pg[hidden] { display: none; }
+  .sx-ctrls { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); align-items: end; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .sx-ctrls label { display: grid; gap: 2px; min-width: 0; }
+  .sx-ctrls select, .sx-btn { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); max-width: 100%; }
+  .sx-btn { cursor: pointer; }
+  .sx-btn:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .sx-ctrls .sx-chk { display: flex; align-items: center; gap: var(--cds-gap-xs); color: var(--color-fg); font-size: var(--cds-font-size-body); padding-block: var(--cds-pad-xs); }
+  .sx-map { position: relative; min-height: 420px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; background: var(--color-bg); }
+  .sx-map svg { display: block; cursor: grab; }
+  .sx-zoom { position: absolute; right: var(--cds-pad-sm); bottom: var(--cds-pad-sm); display: grid; gap: var(--cds-gap-xs); z-index: 1; }
+  .sx-zoom .sx-btn { width: 2rem; height: 2rem; padding: 0; text-align: center; background: var(--color-panel); }
+  .sx-regiao { position: absolute; right: var(--cds-pad-md); top: var(--cds-pad-sm); max-width: 60%; text-align: right; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.1; color: var(--color-fg); pointer-events: none; z-index: 1; text-shadow: 0 0 4px var(--color-bg), 0 0 8px var(--color-bg); }
+  .sx-leg-btn.sx-outros { border: 1px solid var(--color-border-line); color: var(--color-fg); }
+  .sx-voltar { position: absolute; left: var(--cds-pad-sm); top: var(--cds-pad-sm); z-index: 1; background: var(--color-panel); }
+  .sx-filtro { position: relative; display: flex; align-items: end; gap: var(--cds-gap-xs); }
+  .sx-ajuda { width: 2rem; height: 2rem; padding: 0; border-radius: 50%; font-weight: var(--cds-font-weight-medium); }
+  .sx-ajuda:hover, .sx-ajuda:focus { border-color: var(--color-fg); }
+  .sx-ajuda-txt { display: none; position: absolute; left: 0; top: calc(100% + 6px); z-index: 3; width: min(26rem, calc(100vw - 2rem)); color: var(--color-fg); gap: var(--cds-gap-xs); background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-caption); }
+  .sx-ajuda:hover + .sx-ajuda-txt, .sx-ajuda:focus + .sx-ajuda-txt { display: grid; }
+  .sx-ajuda-txt p { margin: 0; }
+  .sx-vazio { display: flex; align-items: center; justify-content: center; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); padding: var(--cds-pad-lg); text-align: center; }
+  .sx-regiao-sub { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); color: var(--color-fg-muted); }
+  .sx-map-nota { position: absolute; left: var(--cds-pad-sm); bottom: var(--cds-pad-sm); max-width: calc(100% - 5rem); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); background: var(--color-panel); border-radius: var(--cds-radius); padding: 2px var(--cds-pad-xs); pointer-events: none; }
+  .sx a { color: inherit; text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+  .sx a:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .sx code { font-size: .92em; overflow-wrap: anywhere; }
+  .sx-metodo .sx-grid { align-items: start; }
+  .sx-metodo h3 { font-size: var(--cds-font-size-body); }
+  .sx-fonte { display: grid; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); }
+  .sx-fonte p { margin: 0; max-width: 70ch; }
+  .sx-fonte .sx-tag { display: inline-block; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 0 var(--cds-pad-xs); }
+  .sx-passos { margin: 0; padding-left: 1.4em; display: grid; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); max-width: 80ch; }
+  .sx-leg-btn { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: var(--cds-gap-xs); padding: 2px var(--cds-pad-xs); border-radius: var(--cds-radius); font-variant-numeric: tabular-nums; }
+  .sx-leg-btn[aria-pressed=true] { outline: 1px solid var(--color-fg); color: var(--color-fg); }
+  .sx-leg-btn:focus-visible { outline: 2px solid var(--color-fg); }
+  .sx-legend .sx-ramp { width: 8rem; height: .625rem; border-radius: 2px; }
+  .sx-tip.sx-tip-wrap { white-space: normal; width: max-content; max-width: min(22rem, 92%); }
+  .sx-tip table { border-collapse: collapse; margin-top: var(--cds-gap-xs); width: 100%; }
+  .sx-tip td { padding: 0 var(--cds-pad-xs) 0 0; }
+  .sx-tip .num { text-align: right; white-space: nowrap; }
+  .sx-tip .sx-sw { display: inline-block; width: .5rem; height: .5rem; border-radius: 2px; margin-right: 4px; }
+  .sx-tip .sx-end { color: var(--color-fg-muted); }
+  .sx-bars { position: relative; min-height: 360px; }
+  .sx-freeze { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--cds-gap-xs) var(--cds-gap-sm); margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .sx-freeze b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+</style>
+
+<div class="sx">
+  <nav class="sx-tabs" role="tablist" aria-label="Páginas">
+    <button class="sx-tab" role="tab" id="tab-geral" data-pg="geral" aria-selected="true">Visão geral</button>
+    <button class="sx-tab" role="tab" id="tab-mapa" data-pg="mapa" aria-selected="false">Mapa de votos</button>
+    <button class="sx-tab" role="tab" id="tab-agregadas" data-pg="agregadas" aria-selected="false">Seções agregadas</button>
+    <button class="sx-tab" role="tab" id="tab-origem" data-pg="origem" aria-selected="false">Origem dos dados</button>
+  </nav>
+  <p class="sx-freeze" id="freeze-atual"><span class="sx-pill">Freeze</span> <span>Lista oficial de seções alteradas coletada em <b data-source="ultimo_freeze" data-field="rotulo" data-row="0">—</b></span><span>· gerada pelo TSE em <span data-source="ultimo_freeze" data-field="lista_gerada_tse" data-row="0">—</span></span><span>· <span data-source="ultimo_freeze" data-field="secoes_alteradas" data-row="0">—</span> seções</span></p>
+
+  <div class="sx-pg" id="geral" role="tabpanel" aria-labelledby="tab-geral">
+  <header class="sx-head" id="topo">
+    <h1>Seções eleitorais TSE 2026</h1>
+    <p id="resumo"><span class="dash-skeleton">Carregando resumo</span></p>
+    <p class="sx-stamp">Seções alteradas: lista oficial do TSE coletada em <span data-source="ultimo_freeze" data-field="rotulo" data-row="0">—</span>. Seções agregadas: eleitorado por local de votação gerado pelo TSE em <span data-source="ultimo_freeze" data-field="eleitorado_gerado_tse" data-row="0">—</span>. 1º turno em 04/10/2026, 2º turno em 25/10/2026.</p>
+  </header>
+
+  <section class="sx-tiles" id="totais">
+    <div class="sx-card">
+      <div class="sx-label">Seções agregadas no 1º turno</div>
+      <div class="sx-big dash-skeleton" data-source="totais" data-field="agregadas" data-row="0">—</div>
+      <div class="sx-sub"><span data-source="pct_agregadas" data-field="pct" data-row="0">—</span> das <span data-source="totais" data-field="secoes_1t" data-row="0">—</span> seções</div>
+    </div>
+    <div class="sx-card">
+      <div class="sx-label">Eleitores em seções agregadas</div>
+      <div class="sx-big dash-skeleton" data-source="totais" data-field="eleitores_agregadas" data-row="0">—</div>
+      <div class="sx-sub">de <span data-source="totais" data-field="eleitores_1t" data-row="0">—</span> eleitores aptos</div>
+    </div>
+    <div class="sx-card">
+      <div class="sx-label">Seções que mudaram de local para o 2º turno</div>
+      <div class="sx-big dash-skeleton" data-source="totais" data-field="mudancas" data-row="0">—</div>
+      <div class="sx-sub"><span data-source="totais" data-field="eleitores_mudancas" data-row="0">—</span> eleitores · lista oficial do TSE</div>
+    </div>
+    <div class="sx-card">
+      <div class="sx-label">Novo local sem coordenada</div>
+      <div class="sx-big dash-skeleton" data-source="totais" data-field="sem_coord_2t" data-row="0">—</div>
+      <div class="sx-sub">seções alteradas cujo local do 2º turno não tem latitude e longitude no eleitorado</div>
+    </div>
+  </section>
+
+  <section class="sx-section">
+    <h2>Por UF</h2>
+    <div class="sx-grid">
+      <div class="sx-card" id="card-agregadas">
+        <h3>Seções agregadas no 1º turno</h3>
+        <p class="sx-note">Seções com CD_TIPO_SECAO_AGREGADA = 2. O percentual é sobre todas as seções da UF. ZZ = exterior.</p>
+        <div class="sx-chart dash-skeleton" id="ch-agregadas" data-source="por_uf"></div>
+      </div>
+      <div class="sx-card" id="card-mudancas-uf">
+        <h3>Seções que mudaram do 1º para o 2º turno</h3>
+        <div class="sx-legend" id="leg-mud"></div>
+        <div class="sx-chart dash-skeleton" id="ch-mudancas" data-source="por_uf"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sx-section">
+    <h2>Mudanças de local entre turnos</h2>
+    <div class="sx-grid">
+      <div class="sx-card" id="card-municipios">
+        <h3>Municípios com mais seções alteradas</h3>
+        <p class="sx-note">Os 15 municípios com mais seções que trocaram de local.</p>
+        <div class="sx-tablebox">
+          <table class="sx-table" id="tb-municipios" data-source="top_municipios" data-row-key="uf,municipio">
+            <thead><tr>
+              <th data-field="uf">UF</th>
+              <th data-field="municipio">Município</th>
+              <th data-field="secoes" class="num">Seções</th>
+              <th data-field="eleitores" class="num">Eleitores</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sx-section" id="lista">
+    <h2>Todas as seções alteradas</h2>
+    <div class="sx-card">
+      <input class="sx-search" id="busca" type="search" placeholder="Buscar município, local ou UF" aria-label="Buscar nas seções alteradas">
+      <p class="sx-note" id="contagem"></p>
+      <div class="sx-tablebox">
+        <table class="sx-table" id="tb-mudancas" data-source="mudancas" data-row-key="id">
+          <thead><tr>
+            <th data-field="uf"><button data-k="uf">UF</button></th>
+            <th data-field="municipio"><button data-k="municipio">Município</button></th>
+            <th data-field="zona" class="num"><button data-k="zona" data-n="1">Zona</button></th>
+            <th data-field="secao" class="num"><button data-k="secao" data-n="1">Seção</button></th>
+            <th data-field="eleitores" class="num"><button data-k="eleitores" data-n="1">Eleitores</button></th>
+            <th data-field="local_1t" class="sx-hide-narrow"><button data-k="local_1t">Local no 1º turno</button></th>
+            <th data-field="local_2t"><button data-k="local_2t">Local no 2º turno</button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sx-section sx-metodo" id="metodo-geral">
+    <h2>Metodologia</h2>
+    <div class="sx-grid">
+      <div class="sx-card">
+        <h3>Seções agregadas</h3>
+        <ul class="sx-method">
+          <li>Uma seção é agregada quando <code>CD_TIPO_SECAO_AGREGADA = 2</code> na linha dela do 1º turno. Ela não tem urna própria: os eleitores votam na urna da seção principal (<code>NR_SECAO_PRINCIPAL</code>).</li>
+          <li>O percentual de agregadas é o número de seções agregadas dividido pelo total de seções do 1º turno, no país ou na UF.</li>
+          <li>Os eleitores em seções agregadas são a soma de <code>QT_ELEITOR_SECAO</code> dessas seções.</li>
+        </ul>
+      </div>
+      <div class="sx-card">
+        <h3>Mudanças entre o 1º e o 2º turno</h3>
+        <ul class="sx-method">
+          <li>As seções alteradas são as da lista oficial do TSE (<code>secoes_eleitorais_alteradas_2t-pais_2026</code>), que o tribunal atualiza ao longo do dia. Vale a lista do freeze escolhido no topo (por padrão, o mais recente).</li>
+          <li>A lista traz UF, município, zona, seção, o nome do local inicial e do final e o número de eleitores. Ela é cruzada com o eleitorado por UF, município, zona e seção para obter o código do município e o endereço e as coordenadas do local do 1º turno.</li>
+          <li><b>Local do 2º turno</b>: endereço e coordenadas vêm da linha do 2º turno da seção no eleitorado quando o nome do local é o mesmo da lista; senão, de um local com o mesmo nome no município. Os nomes são comparados sem acentos e sem pontuação, porque a lista troca o ponto por vírgula (“E, M,” por “E. M.”).</li>
+          <li>Quando o local final não é encontrado, ou não tem coordenada no cadastro, a seção fica sem coordenada do 2º turno.</li>
+        </ul>
+      </div>
+      <div class="sx-card">
+        <h3>Limpeza dos dados</h3>
+        <ul class="sx-method">
+          <li>Os nulos do LEIAME (<code>#NULO</code>, −1, <code>#NE</code>, −3) e os campos vazios viram vazio.</li>
+          <li>O zip do TSE repete as mesmas linhas no arquivo BRASIL e nos arquivos por UF. Só o BRASIL foi lido, para não contar em dobro, e linhas repetidas foram removidas.</li>
+          <li>Voto em trânsito (VT) fica de fora, porque não é uma seção fixa num local. ZZ é o exterior.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <div class="sx-pg" id="mapa" role="tabpanel" aria-labelledby="tab-mapa" hidden></div>
+  <div class="sx-pg" id="agregadas" role="tabpanel" aria-labelledby="tab-agregadas" hidden></div>
+  <div class="sx-pg" id="origem" role="tabpanel" aria-labelledby="tab-origem" hidden>
+    <header class="sx-head" id="origem-topo">
+      <h1>Origem dos dados</h1>
+      <p>Tudo neste painel vem de três bases públicas do Tribunal Superior Eleitoral: os votos por seção e o cadastro de eleitorado por local de votação, que não mudam mais e ficam em <code>extracao/dados/geral/</code>, e a lista oficial de seções alteradas no 2º turno, que o TSE atualiza ao longo do dia e é guardada em freezes datados.</p>
+    </header>
+
+    <div class="sx-grid">
+      <div class="sx-card sx-fonte" id="fonte-api">
+        <span class="sx-tag">1 · Extração via API</span>
+        <h3>Votos por seção eleitoral</h3>
+        <p><b>O que é</b>: o arquivo <code>votacao_secao_2026_BR</code> do repositório de dados eleitorais do TSE, com os votos de cada candidato (e brancos e nulos) em cada seção, para todos os cargos e turnos.</p>
+        <p><b>Como foi obtido</b>: o script <code>votos_primeiro_turno.py</code> faz uma requisição HTTP direta ao servidor de arquivos do TSE, em <a href="https://cdn.tse.jus.br/estatistica/sead/odsele/votacao_secao/votacao_secao_2026_BR.zip" target="_blank" rel="noopener noreferrer">cdn.tse.jus.br/…/votacao_secao_2026_BR.zip</a>, e baixa o zip em partes de 1 MB, sem carregá-lo inteiro na memória.</p>
+        <p><b>Filtro</b>: o CSV de dentro do zip é lido em blocos de 200 mil linhas, guardando só as linhas de <b>Presidente</b> no <b>1º turno</b>. O resultado é <code>extracao/dados/geral/votos_presidente_por_secao_2026.csv</code>, com cerca de 1 GB. O 1º turno não muda mais, então o arquivo é baixado uma vez só.</p>
+        <p><b>Versão usada</b>: gerada pelo TSE em 06/10/2026 às 14:03, dois dias depois do 1º turno (04/10/2026).</p>
+        <p><b>Onde aparece</b>: aba Mapa de votos.</p>
+      </div>
+
+      <div class="sx-card sx-fonte" id="fonte-portal">
+        <span class="sx-tag">2 · Portal de Dados Abertos</span>
+        <h3>Eleitorado por local de votação</h3>
+        <p><b>O que é</b>: o recurso <code>eleitorado_local_votacao_2026</code> do conjunto <a href="https://dadosabertos.tse.jus.br/dataset/eleitorado-2026" target="_blank" rel="noopener noreferrer">Eleitorado 2026</a>. Traz uma linha por seção e por turno, com o local de votação, endereço, bairro, CEP, latitude e longitude, o tipo da seção (principal ou agregada), a seção principal e o número de eleitores.</p>
+        <p><b>Como foi obtido</b>: download manual do zip no portal, salvo em <code>extracao/dados/geral/</code>. O script <code>secoes_tse_2026.py</code> lê o arquivo direto do zip.</p>
+        <p><b>Formato</b>: conforme o LEIAME do TSE. Latin-1, campos separados por <code>;</code>, <code>#NULO</code>/<code>-1</code> para campo em branco e <code>#NE</code>/<code>-3</code> para não registrado.</p>
+        <p><b>Versão usada</b>: gerada pelo TSE em <span data-source="ultimo_freeze" data-field="eleitorado_gerado_tse" data-row="0">—</span>, já com as seções do 2º turno (25/10/2026).</p>
+        <p><b>Onde aparece</b>: todas as abas. É a única base das seções agregadas; para as seções alteradas dá o código do município, os endereços e as coordenadas.</p>
+      </div>
+
+      <div class="sx-card sx-fonte" id="fonte-lista">
+        <span class="sx-tag">3 · Lista oficial, em freezes</span>
+        <h3>Seções eleitorais alteradas no 2º turno</h3>
+        <p><b>O que é</b>: a lista <code>secoes_eleitorais_alteradas_2t-pais_2026</code> do TSE, com uma linha por seção que mudou de local para o 2º turno: UF, município, zona, seção, local inicial, local final e eleitores.</p>
+        <p><b>Como é obtido</b>: o TSE republica a lista ao longo do dia, e ela é aceita de duas formas: o CSV em <a href="https://www.tse.jus.br" target="_blank" rel="noopener noreferrer">tse.jus.br</a>, Home &gt; Eleitorado da eleição &gt; Capilaridade (o caminho mais fácil), ou o zip do conjunto <a href="https://dadosabertos.tse.jus.br/dataset/eleitorado-2026" target="_blank" rel="noopener noreferrer">Eleitorado 2026</a> no Portal de Dados Abertos, que também informa quando o TSE gerou o arquivo. A cada download, <code>freeze.py novo</code> abre uma pasta <code>extracao/dados/AAAA-MM-DD_HHMM/</code> com a data e hora da coleta, e o arquivo é salvo nela.</p>
+        <p><b>Versão usada</b>: a do freeze escolhido no topo, coletada em <span data-source="ultimo_freeze" data-field="rotulo" data-row="0">—</span> e gerada pelo TSE em <span data-source="ultimo_freeze" data-field="lista_gerada_tse" data-row="0">—</span>.</p>
+        <p><b>Onde aparece</b>: Visão geral (mudanças) e Mapa de votos.</p>
+      </div>
+    </div>
+
+    <section class="sx-section" id="freezes">
+      <h2>Freezes registrados</h2>
+      <div class="sx-card">
+        <p class="sx-note">Cada linha é uma coleta da lista oficial de seções alteradas. O painel abre no mais recente; o seletor no topo mostra os anteriores.</p>
+        <div class="sx-tablebox">
+          <table class="sx-table" id="tb-freezes" data-source="freezes" data-row-key="freeze">
+            <thead><tr><th data-field="freeze">Freeze</th><th data-field="coletado_em">Coletado em</th><th data-field="lista_gerada_tse">Lista gerada pelo TSE</th><th data-field="secoes_alteradas" class="num">Seções</th><th data-field="processado">Processado</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="sx-section" id="fluxo">
+      <h2>Do download ao painel</h2>
+      <div class="sx-card">
+        <ol class="sx-passos">
+          <li><code>votos_primeiro_turno.py</code>: baixa e filtra os votos (fonte 1) e gera <code>votos_presidente_por_secao_2026.csv</code>.</li>
+          <li><code>freeze.py novo</code>: abre o freeze da coleta, onde se salva a lista oficial (fonte 3).</li>
+          <li><code>secoes_tse_2026.py</code>: lê o eleitorado (fonte 2) e a lista do freeze mais recente e gera as seções agregadas do 1º turno (<code>secoes_agregadas_1t.csv</code> e um JSON por UF em <code>agregadas_uf/</code>), as seções alteradas com os locais dos dois turnos (<code>secoes_mudanca_local_1t_2t.csv</code>) e os totais (<code>resumo.json</code>), tudo em <code>extracao/saida/&lt;freeze&gt;/</code>.</li>
+          <li><code>votos_secoes_mudanca.py</code>: cruza as seções que mudaram com os votos, somando os votos por candidato em cada seção, e gera <code>votos_secoes_mudanca_1t.csv</code> com local, endereço e coordenadas dos dois turnos.</li>
+          <li><code>painel.py</code>: monta os arquivos deste painel (<code>totais</code>, <code>por_uf</code>, <code>mudancas</code>, <code>votos_mapa</code>, <code>candidatos</code>, <code>resumo.json</code> e os JSON das agregadas por UF) em <code>dashboard/data/&lt;freeze&gt;/</code>, e a lista de freezes em <code>dashboard/data/freezes.csv</code>.</li>
+          <li>Os arquivos de <code>dashboard/data/</code> são versionados no repositório; a cada push na <code>main</code> o GitHub Pages republica o painel com eles. Eles não se atualizam sozinhos: um freeze novo só aparece depois de rodar os scripts e enviar os arquivos.</li>
+        </ol>
+      </div>
+      <div class="sx-card sx-fonte" id="fonte-mapa-base">
+        <h3>Contorno dos estados</h3>
+        <p>O fundo dos mapas usa o arquivo <code>brazil-states.geojson</code> do projeto aberto <a href="https://github.com/codeforgermany/click_that_hood" target="_blank" rel="noopener noreferrer">click_that_hood</a> (Code for Germany), simplificado para coordenadas com duas casas decimais. Não é uma base do TSE e serve só de referência visual.</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<template id="tpl-mapa">
+  <header class="sx-head" id="mapa-topo">
+    <h1>Votos nas seções que mudaram de local</h1>
+    <p id="mapa-resumo"><span class="dash-skeleton">Carregando resumo</span></p>
+    <p class="sx-stamp">Votos para Presidente no 1º turno (04/10/2026) de cada seção da lista oficial de seções que mudaram de local para o 2º turno.</p>
+  </header>
+
+  <div class="sx-card" id="card-mapa">
+    <h3>Mapa das seções alteradas</h3>
+    <p class="sx-note">Cada ponto é uma seção; seções no mesmo local aparecem lado a lado. Clique num estado ou num ponto para aproximar e selecionar a UF, e fora dos estados ou em ← Brasil para voltar ao país inteiro; passe o mouse ou toque num ponto para ver o voto por candidato. Arraste para mover; Ctrl + roda do mouse, pinça ou os botões aproximam.</p>
+    <div class="sx-ctrls">
+      <label>Local no mapa
+        <select id="m-turno">
+          <option value="2t">2º turno (novo local)</option>
+          <option value="1t">1º turno (onde votaram)</option>
+        </select>
+      </label>
+      <label>Cor dos pontos <select id="m-modo"><option value="vencedor">Mais votado na seção</option></select></label>
+      <label>UF <select id="m-uf"><option value="">Brasil inteiro</option></select></label>
+      <div class="sx-filtro">
+        <label>Tipo de mudança
+          <select id="m-motivo">
+            <option value="Todas">Todas</option>
+            <option value="Local">Mudou de local</option>
+          </select>
+        </label>
+        <button type="button" class="sx-btn sx-ajuda" id="m-ajuda" aria-describedby="m-ajuda-txt" aria-label="Saiba mais sobre os tipos de mudança">?</button>
+        <div class="sx-ajuda-txt" id="m-ajuda-txt" role="tooltip">
+          <p><b>Mudou de local</b>: o número do local de votação da seção no 2º turno é diferente do 1º. O eleitor dessa seção vota em outro prédio, com outro nome e, em geral, outro endereço.</p>
+          <p>As seções vêm da lista oficial do TSE de seções alteradas no 2º turno, do freeze escolhido no topo. Todas mudaram de local.</p>
+        </div>
+      </div>
+      <label class="sx-chk"><input type="checkbox" id="m-linhas"> Ligar local do 1º ao do 2º turno</label>
+    </div>
+    <div class="sx-legend" id="m-leg" data-source="totais_candidatos"></div>
+    <div class="sx-map dash-skeleton" id="m-mapa" data-source="votos_mapa ufs"></div>
+  </div>
+
+  <div class="sx-grid">
+    <div class="sx-card" id="card-tot-cand">
+      <h3>Votos por candidato nessas seções</h3>
+      <p class="sx-note">Soma do 1º turno nas seções alteradas do tipo escolhido no filtro, inclusive brancos e nulos, e o percentual sobre o total delas.</p>
+      <div class="sx-bars dash-skeleton" id="m-barras" data-source="totais_candidatos"></div>
+    </div>
+  </div>
+  <section class="sx-section sx-metodo" id="metodo-mapa">
+    <h2>Metodologia</h2>
+    <div class="sx-grid">
+      <div class="sx-card">
+        <h3>Votos por seção</h3>
+        <ul class="sx-method">
+          <li>Os votos vêm do arquivo de votação por seção do TSE, filtrado para Presidente no 1º turno. Para cada seção, os votos (<code>QT_VOTOS</code>) foram somados por número de urna; 95 é voto branco e 96 é voto nulo.</li>
+          <li>As seções que mudaram entre os turnos foram cruzadas com os votos por UF, município, zona e seção. Os códigos foram comparados como números, porque um arquivo traz zeros à esquerda e o outro não.</li>
+          <li>Seções alteradas que são agregadas não têm votos próprios (os votos estão na seção principal) e por isso não entram aqui.</li>
+          <li>O filtro <b>Tipo de mudança</b> vale para os pontos, a legenda, o resumo e o gráfico de barras.</li>
+        </ul>
+      </div>
+      <div class="sx-card">
+        <h3>Cores</h3>
+        <ul class="sx-method">
+          <li><b>Mais votado na seção</b>: o candidato com mais votos ali, contando brancos e nulos como opções. Num empate, fica o de menor número.</li>
+          <li>Lula e Flávio Bolsonaro, que disputam o 2º turno, têm cor própria. As seções vencidas pelos demais, ou por brancos e nulos, ficam como <b>Outros</b> até que Outros seja aberto na legenda.</li>
+          <li><b>Percentual de um candidato</b>: votos dele divididos pelo total da seção. A escala vai de 0 ao maior percentual entre os pontos no mapa.</li>
+        </ul>
+      </div>
+      <div class="sx-card">
+        <h3>Posição no mapa</h3>
+        <ul class="sx-method">
+          <li>As coordenadas são as do local de votação no cadastro do TSE (<code>NR_LATITUDE</code> e <code>NR_LONGITUDE</code>), do turno escolhido. Quando faltam, o ponto usa a do outro turno e o detalhe avisa.</li>
+          <li>Seções do exterior e sem coordenada em nenhum turno ficam fora do mapa, mas entram nos totais.</li>
+          <li>O mapa usa longitude e latitude direto, sem projeção cartográfica, o que basta na escala do Brasil. Seções no mesmo local são espalhadas numa pequena espiral para não ficarem uma sobre a outra; a distância entre elas é só visual.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</template>
+
+<template id="tpl-agreg">
+  <header class="sx-head" id="agreg-topo">
+    <h1>Seções agregadas no 1º turno</h1>
+    <p id="ag-resumo">Escolha uma UF para carregar as seções agregadas dela.</p>
+    <p class="sx-stamp">Seções com CD_TIPO_SECAO_AGREGADA = 2 no cadastro de locais de votação do TSE (arquivo do freeze escolhido no topo). Uma seção agregada não tem urna própria: os eleitores dela votam na urna da seção principal.</p>
+  </header>
+
+  <div class="sx-card" id="card-agreg-mapa">
+    <h3>Mapa das seções agregadas</h3>
+    <p class="sx-note">Os dados são carregados por UF, só depois da escolha. Cada ponto é uma seção agregada; seções no mesmo local aparecem lado a lado. Passe o mouse ou toque num ponto para ver o detalhe. Arraste para mover; Ctrl + roda do mouse, pinça ou os botões aproximam.</p>
+    <div class="sx-ctrls">
+      <label>UF <select id="ag-uf"><option value="">Escolha a UF</option></select></label>
+      <label>Município <select id="ag-mun" disabled><option value="">Todos</option></select></label>
+    </div>
+    <div class="sx-map" id="ag-mapa"></div>
+  </div>
+
+  <div class="sx-card" id="card-agreg-tabela">
+    <h3>Lista das seções agregadas</h3>
+    <input class="sx-search" id="ag-busca" type="search" placeholder="Buscar município, local ou seção" aria-label="Buscar nas seções agregadas">
+    <p class="sx-note" id="ag-contagem"></p>
+    <div class="sx-tablebox">
+      <table class="sx-table" id="ag-tabela" data-row-key="cd_municipio,zona,secao">
+        <thead><tr>
+          <th data-field="municipio">Município</th>
+          <th data-field="zona" class="num">Zona</th>
+          <th data-field="secao" class="num">Seção</th>
+          <th data-field="secao_principal" class="num">Principal</th>
+          <th data-field="local" class="sx-hide-narrow">Local de votação</th>
+          <th data-field="eleitores" class="num">Eleitores</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <section class="sx-section sx-metodo" id="metodo-agregadas">
+    <h2>Metodologia</h2>
+    <div class="sx-grid">
+      <div class="sx-card">
+        <h3>Seleção e arquivos por UF</h3>
+        <ul class="sx-method">
+          <li>Entram as seções com <code>CD_TIPO_SECAO_AGREGADA = 2</code> no 1º turno, as mesmas contadas na Visão geral. As do exterior ficam de fora.</li>
+          <li>Cada UF tem o próprio arquivo JSON, todos com o mesmo schema: UF, código e nome do município, zona, seção, seção principal, número e nome do local, endereço, bairro, CEP, latitude, longitude e eleitores.</li>
+          <li>O painel só baixa o arquivo da UF escolhida, o que deixa a aba leve mesmo nos estados com muitas seções.</li>
+        </ul>
+      </div>
+      <div class="sx-card">
+        <h3>Como ler</h3>
+        <ul class="sx-method">
+          <li><b>Seção principal</b>: a seção em cuja urna os eleitores da agregada votam (<code>NR_SECAO_PRINCIPAL</code>), na mesma zona.</li>
+          <li><b>Eleitores</b>: <code>QT_ELEITOR_SECAO</code> da seção agregada.</li>
+          <li>O resumo usa os totais por UF calculados para a Visão geral.</li>
+          <li>Coordenadas e espalhamento dos pontos seguem a mesma regra do Mapa de votos. Seções sem coordenada aparecem só na lista, e o mapa diz quantas são.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+  const loc = d3.formatLocale({ decimal: ",", thousands: ".", grouping: [3], currency: ["R$", ""] });
+  window.sxFmt = { n: loc.format(","), pct: loc.format(".1%") };
+
+  dash.calc("pct_agregadas", {
+    inputs: ["totais"],
+    title: "Share de seções agregadas",
+    description: "Seções agregadas no 1º turno divididas pelo total de seções do 1º turno.",
+    fn: (totais) => totais.map(t => ({ pct: Number(t.agregadas) / Number(t.secoes_1t) }))
+  });
+
+  dash.calc("top_municipios", {
+    inputs: ["mudancas"],
+    title: "Municípios com mais mudanças",
+    description: "Seções alteradas entre turnos contadas por município (e seus eleitores), as 15 maiores.",
+    fn: (mudancas) => {
+      const m = new Map();
+      for (const r of mudancas) {
+        const k = r.uf + "|" + r.municipio;
+        const o = m.get(k) || { uf: r.uf, municipio: r.municipio, secoes: 0, eleitores: 0 };
+        o.secoes++;
+        o.eleitores += Number(r.eleitores) || 0;
+        m.set(k, o);
+      }
+      return [...m.values()].sort((a, b) => b.secoes - a.secoes || a.municipio.localeCompare(b.municipio)).slice(0, 15);
+    }
+  });
+</script>
+
+<script>
+  const { n: fN, pct: fP } = window.sxFmt;
+
+  function fail(el) {
+    el.textContent = "";
+    const d = document.createElement("div");
+    d.className = "sx-fail";
+    d.textContent = "Failed to load";
+    el.appendChild(d);
+  }
+
+  function fill(sel, src, fmt) {
+    document.querySelectorAll(sel).forEach(el => {
+      const st = dash.data(src);
+      if (st.status !== "ok") { el.textContent = "—"; return; }
+      const row = st.data[Number(el.dataset.row || 0)];
+      const v = row ? row[el.dataset.field] : undefined;
+      el.textContent = v === undefined || v === "" ? "—" : fmt(Number(v));
+      el.classList.remove("dash-skeleton");
+    });
+  }
+
+  // Barras horizontais por UF; series = [{key, label, color}], empilhadas
+  function hbars(el, rows, series, endLabel, tipLines) {
+    el.textContent = "";
+    el.classList.remove("dash-skeleton");
+    const W = Math.max(280, el.clientWidth), bh = 16, gap = 6;
+    const H = rows.length * (bh + gap) + 8;
+    const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("height", H);
+    const meas = svg.append("text").attr("font-size", 12).attr("visibility", "hidden");
+    const tw = s => { meas.text(s); return meas.node().getComputedTextLength(); };
+    const left = d3.max(rows, r => tw(r.uf)) + 10;
+    const right = d3.max(rows, r => tw(endLabel(r))) + 12;
+    meas.remove();
+    const total = r => d3.sum(series, s => Number(r[s.key]));
+    const x = d3.scaleLinear([0, d3.max(rows, total) || 1], [left, W - right]);
+    const y = d3.scaleBand(rows.map(r => r.uf), [4, H - 4]).paddingInner(gap / (bh + gap));
+    const tip = d3.select(el).append("div").attr("class", "sx-tip").attr("hidden", true);
+
+    const g = svg.selectAll("g.row").data(rows).join("g").attr("class", "row").attr("transform", r => `translate(0,${y(r.uf)})`);
+    g.append("text").attr("x", left - 8).attr("y", y.bandwidth() / 2).attr("dy", "0.35em").attr("text-anchor", "end")
+      .attr("font-size", 12).style("fill", "var(--color-fg-muted)").text(r => r.uf);
+    g.each(function (r) {
+      let x0 = left;
+      for (const s of series) {
+        const w = x(Number(r[s.key])) - left;
+        if (w > 0) d3.select(this).append("rect").attr("x", x0).attr("y", 0).attr("width", Math.max(w, 1)).attr("height", y.bandwidth())
+          .attr("rx", series.length === 1 ? 4 : 2).style("fill", s.color);
+        x0 += w;
+      }
+    });
+    g.append("text").attr("x", r => x(total(r)) + 6).attr("y", y.bandwidth() / 2).attr("dy", "0.35em")
+      .attr("font-size", 12).style("fill", "var(--color-fg)").style("font-variant-numeric", "tabular-nums").text(endLabel);
+    g.append("rect").attr("x", 0).attr("y", -gap / 2).attr("width", W).attr("height", y.bandwidth() + gap).style("fill", "transparent")
+      .on("mousemove", (ev, r) => {
+        tip.attr("hidden", null).html("");
+        tip.append("div").attr("class", "sx-tip-h").text(r.uf);
+        for (const line of tipLines(r)) tip.append("div").text(line);
+        const [mx, my] = d3.pointer(ev, el);
+        const tn = tip.node(), tw2 = tn.offsetWidth;
+        tip.style("left", Math.min(Math.max(0, mx + 12), el.clientWidth - tw2) + "px").style("top", (my + 12) + "px");
+      })
+      .on("mouseleave", () => tip.attr("hidden", true));
+  }
+
+  const cols = dash.colors;
+  const leg = document.getElementById("leg-mud");
+  leg.textContent = "";
+  [["Mudou de local", cols[0]]].forEach(([t, c]) => {
+    const s = document.createElement("span"), i = document.createElement("i");
+    i.style.background = c; s.append(i, t); leg.appendChild(s);
+  });
+
+  window.sxDrawGeral = () => {
+    if (document.getElementById("geral").hidden) return;
+    fill('[data-source="totais"]', "totais", fN);
+    fill('[data-source="pct_agregadas"]', "pct_agregadas", fP);
+
+    // Resumo em uma frase
+    const t = dash.data("totais"), p = dash.data("pct_agregadas"), resumo = document.getElementById("resumo");
+    if (t.status === "ok" && p.status === "ok" && t.data[0]) {
+      const r = t.data[0];
+      resumo.textContent = "";
+      const mk = (src, field, fmt, v) => {
+        const s = document.createElement("span");
+        s.dataset.source = src; s.dataset.field = field; s.dataset.row = "0"; s.textContent = fmt(Number(v));
+        return s;
+      };
+      resumo.append(
+        mk("totais", "agregadas", fN, r.agregadas), " seções foram agregadas no 1º turno (",
+        mk("pct_agregadas", "pct", fP, p.data[0].pct), " do total). Para o 2º turno, ",
+        mk("totais", "mudancas", fN, r.mudancas), " seções mudaram de local, com ",
+        mk("totais", "eleitores_mudancas", fN, r.eleitores_mudancas), " eleitores, segundo a lista oficial do TSE desse freeze."
+      );
+    } else if (t.status === "error") { fail(resumo); }
+
+    const u = dash.data("por_uf");
+    const chA = document.getElementById("ch-agregadas"), chM = document.getElementById("ch-mudancas");
+    if (u.status === "ok") {
+      const rowsA = [...u.data].sort((a, b) => Number(b.agregadas) - Number(a.agregadas));
+      hbars(chA, rowsA, [{ key: "agregadas", color: cols[0] }],
+        r => `${fN(Number(r.agregadas))} · ${fP(Number(r.pct_agregadas))}`,
+        r => [`${fN(Number(r.agregadas))} seções agregadas`, `${fP(Number(r.pct_agregadas))} das ${fN(Number(r.secoes_uf))} seções`, `${fN(Number(r.eleitores_agregadas))} eleitores`]);
+      const rowsM = u.data.filter(r => Number(r.mud_total) > 0).sort((a, b) => Number(b.mud_total) - Number(a.mud_total));
+      hbars(chM, rowsM, [{ key: "mud_total", color: cols[0] }],
+        r => fN(Number(r.mud_total)),
+        r => [`${fN(Number(r.mud_total))} seções mudaram de local`, `${fN(Number(r.eleitores_mud))} eleitores`]);
+    } else if (u.status === "error") { fail(chA); fail(chM); }
+    else { chA.textContent = ""; chM.textContent = ""; chA.classList.add("dash-skeleton"); chM.classList.add("dash-skeleton"); }
+
+    // Municípios
+    const tm = dash.data("top_municipios"), tbM = document.querySelector("#tb-municipios tbody");
+    tbM.textContent = "";
+    if (tm.status === "ok") {
+      for (const r of tm.data) {
+        const tr = tbM.insertRow();
+        [[r.uf], [r.municipio], [fN(r.secoes), "num"], [fN(r.eleitores), "num"]].forEach(([v, c]) => {
+          const td = tr.insertCell(); td.textContent = v; if (c) td.className = c;
+        });
+      }
+    } else if (tm.status === "error") {
+      const td = tbM.insertRow().insertCell(); td.colSpan = 4; fail(td);
+    }
+
+    window.sxDrawList && window.sxDrawList();
+  };
+  dash.onData(() => window.sxDrawGeral());
+</script>
+
+<script>
+  (() => {
+    const { n: fN } = window.sxFmt;
+    const tbody = document.querySelector("#tb-mudancas tbody");
+    const busca = document.getElementById("busca");
+    const contagem = document.getElementById("contagem");
+    const btns = document.querySelectorAll("#tb-mudancas th button");
+    let sort = { k: "uf", dir: 1, n: false };
+
+    function draw() {
+      const st = dash.data("mudancas");
+      tbody.textContent = "";
+      if (st.status !== "ok") {
+        contagem.textContent = "";
+        if (st.status === "error") { const td = tbody.insertRow().insertCell(); td.colSpan = 7; td.textContent = "Failed to load"; td.className = "sx-fail"; }
+        return;
+      }
+      const q = busca.value.trim().toLocaleLowerCase("pt-BR");
+      let rows = st.data;
+      if (q) rows = rows.filter(r => [r.uf, r.municipio, r.local_1t, r.local_2t, r.endereco_2t].join(" ").toLocaleLowerCase("pt-BR").includes(q));
+      const key = r => sort.n ? Number(r[sort.k]) : String(r[sort.k]);
+      rows = [...rows].sort((a, b) => {
+        const A = key(a), B = key(b);
+        const c = sort.n ? A - B : A.localeCompare(B, "pt-BR");
+        return c * sort.dir || a.municipio.localeCompare(b.municipio, "pt-BR") || Number(a.zona) - Number(b.zona) || Number(a.secao) - Number(b.secao);
+      });
+      contagem.textContent = `${fN(rows.length)} de ${fN(st.data.length)} seções`;
+      const frag = document.createDocumentFragment();
+      for (const r of rows) {
+        const tr = document.createElement("tr");
+        tr.dataset.key = r.id;
+        const cells = [[r.uf], [r.municipio], [r.zona, "num"], [r.secao, "num"], [fN(Number(r.eleitores)), "num"], [r.local_1t, "sx-hide-narrow"], [r.local_2t]];
+        for (const [v, c] of cells) {
+          const td = document.createElement("td");
+          if (c === "pill") { const s = document.createElement("span"); s.className = "sx-pill"; s.textContent = v; td.appendChild(s); }
+          else { td.textContent = v; if (c) td.className = c; }
+          tr.appendChild(td);
+        }
+        if (r.endereco_2t) tr.cells[6].title = r.endereco_2t;
+        frag.appendChild(tr);
+      }
+      tbody.appendChild(frag);
+      btns.forEach(b => b.parentElement.setAttribute("aria-sort", b.dataset.k === sort.k ? (sort.dir > 0 ? "ascending" : "descending") : "none"));
+    }
+
+    btns.forEach(b => b.addEventListener("click", () => {
+      sort = sort.k === b.dataset.k ? { ...sort, dir: -sort.dir } : { k: b.dataset.k, dir: 1, n: !!b.dataset.n };
+      draw();
+    }));
+    busca.addEventListener("input", draw);
+    window.sxDrawList = draw;
+    draw();
+  })();
+</script>
+
+<script>
+  dash.calc("totais_candidatos", {
+    inputs: ["votos_mapa", "candidatos"],
+    title: "Votos por candidato nas seções alteradas",
+    description: "Por tipo de mudança (Todas, Local, Endereço): votos do 1º turno de cada candidato somados nas seções alteradas, percentual sobre o total e seções em que foi o mais votado (empate fica com o de menor número).",
+    fn: (votos_mapa, candidatos) => {
+      const out = [];
+      for (const motivo of ["Todas", "Local", "Endereço"]) {
+        const rows = motivo === "Todas" ? votos_mapa : votos_mapa.filter(r => r.motivo === motivo);
+        const total = rows.reduce((s, r) => s + Number(r.total), 0);
+        const vencidas = {};
+        for (const r of rows) {
+          let best = null;
+          for (const c of candidatos) if (best === null || Number(r["v" + c.nr]) > Number(r["v" + best])) best = c.nr;
+          if (Number(r.total) > 0) vencidas[best] = (vencidas[best] || 0) + 1;
+        }
+        for (const c of candidatos) {
+          const votos = rows.reduce((s, r) => s + Number(r["v" + c.nr]), 0);
+          out.push({ motivo, nr: c.nr, nome: c.nome, votos, pct: total ? votos / total : 0, vencidas: vencidas[c.nr] || 0 });
+        }
+      }
+      return out;
+    }
+  });
+
+  dash.calc("resumo_mapa", {
+    inputs: ["votos_mapa"],
+    title: "Seções no mapa",
+    description: "Por tipo de mudança (Todas, Local, Endereço): seções alteradas com votos, quantas são do exterior e quantas não têm coordenada em nenhum dos turnos.",
+    fn: (votos_mapa) => {
+      const tem = v => v !== "" && v != null && !isNaN(Number(v));
+      return ["Todas", "Local", "Endereço"].map(motivo => {
+        const rows = motivo === "Todas" ? votos_mapa : votos_mapa.filter(r => r.motivo === motivo);
+        const exterior = rows.filter(r => r.uf === "ZZ").length;
+        const sem_coord = rows.filter(r => r.uf !== "ZZ" && !tem(r.lat_1t) && !tem(r.lat_2t)).length;
+        return { motivo, secoes: rows.length, exterior, sem_coord, no_mapa: rows.length - exterior - sem_coord };
+      });
+    }
+  });
+</script>
+
+<script>
+  (() => {
+    const { n: fN, pct: fP } = window.sxFmt;
+    // Cor fixa por número de urna; brancos e nulos em cinza
+    const CORES = {
+      "13": "#d62728", "22": "#1f77b4", "55": "#2ca02c", "70": "#9467bd", "14": "#ff7f0e",
+      "30": "#8c564b", "80": "#e377c2", "16": "#17becf", "27": "#bcbd22", "21": "#b8860b",
+      "35": "#4575b4", "29": "#7b3294", "28": "#1b9e77", "95": "#b0b0b0", "96": "#5f5f5f"
+    };
+    const corDe = nr => CORES[nr] || "#888888";
+    // Só os dois candidatos do 2º turno ficam visíveis; os demais se abrem em "Outros"
+    const PRINCIPAIS = ["13", "22"];
+    const COR_OUTROS = "#b39b6b";
+    const num = v => (v === "" || v == null || isNaN(Number(v))) ? null : Number(v);
+    const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let turno = "2t", modo = "vencedor", linhas = false, ufSel = "", outros = false, motivoSel = "Todas";
+    const FRASE = { Todas: "seções alteradas", Local: "seções que mudaram de local", "Endereço": "seções que mudaram só o endereço" };
+    let zt = d3.zoomIdentity, ultimoW = 0, fixo = null, geoCache = null;
+
+    function fail(el) {
+      el.textContent = "";
+      const d = document.createElement("div");
+      d.className = "sx-fail"; d.textContent = "Failed to load";
+      el.appendChild(d);
+    }
+    function aguarda(el) { el.textContent = ""; el.classList.add("dash-skeleton"); }
+
+    function vencedor(r, cands) {
+      let best = null;
+      for (const c of cands) if (best === null || Number(r["v" + c.nr]) > Number(r["v" + best])) best = c.nr;
+      return best;
+    }
+
+    function feicoes(rows) {
+      if (geoCache && geoCache.rows === rows) return geoCache.feats;
+      const feats = rows.map(r => ({
+        type: "Feature", properties: { uf: r.uf, nome: r.nome },
+        geometry: { type: "MultiPolygon", coordinates: typeof r.geometria === "string" ? JSON.parse(r.geometria) : r.geometria }
+      }));
+      geoCache = { rows, feats };
+      return feats;
+    }
+
+    function initMapa() {
+      const sTurno = document.getElementById("m-turno"), sModo = document.getElementById("m-modo");
+      const sUf = document.getElementById("m-uf"), cLin = document.getElementById("m-linhas");
+      sTurno.addEventListener("change", () => { turno = sTurno.value; fixo = null; drawMapa(); });
+      sModo.addEventListener("change", () => { modo = sModo.value; drawMapa(); });
+      sUf.addEventListener("change", () => window.sxSelUf && window.sxSelUf(sUf.value));
+      cLin.addEventListener("change", () => { linhas = cLin.checked; drawMapa(); });
+      const sMot = document.getElementById("m-motivo");
+      sMot.addEventListener("change", () => { motivoSel = sMot.value; drawMapa(); });
+    }
+
+    function drawMapa() {
+      const pg = document.getElementById("mapa");
+      const el = document.getElementById("m-mapa");
+      if (!el || pg.hidden) return;
+      const V = dash.data("votos_mapa"), U = dash.data("ufs"), C = dash.data("candidatos");
+      const T = dash.data("totais_candidatos"), R = dash.data("resumo_mapa");
+
+      // Resumo
+      const resumo = document.getElementById("mapa-resumo");
+      const Tm = T.status === "ok" ? T.data.filter(r => r.motivo === motivoSel) : [];
+      const Rm = R.status === "ok" ? R.data.find(r => r.motivo === motivoSel) : null;
+      const ondeM = "motivo=" + encodeURIComponent(motivoSel);
+      if (Rm && Tm.length) {
+        const r = Rm;
+        const lider = [...Tm].sort((a, b) => b.votos - a.votos)[0];
+        const mk = (src, field, txt, where) => {
+          const s = document.createElement("span");
+          s.dataset.source = src; s.dataset.field = field;
+          s.dataset.where = where;
+          s.textContent = txt; return s;
+        };
+        resumo.textContent = "";
+        resumo.append(
+          mk("resumo_mapa", "secoes", fN(r.secoes), ondeM), ` ${FRASE[motivoSel]} têm votos no 1º turno; `,
+          mk("resumo_mapa", "no_mapa", fN(r.no_mapa), ondeM), " estão no mapa (",
+          mk("resumo_mapa", "exterior", fN(r.exterior), ondeM), " são do exterior e ",
+          mk("resumo_mapa", "sem_coord", fN(r.sem_coord), ondeM), " não têm coordenada). Nelas, o mais votado foi ",
+          mk("totais_candidatos", "nome", lider.nome, ondeM + "&nr=" + encodeURIComponent(lider.nr)), ", com ",
+          mk("totais_candidatos", "pct", fP(lider.pct), ondeM + "&nr=" + encodeURIComponent(lider.nr)), " dos votos."
+        );
+      } else if (R.status === "error" || T.status === "error") fail(resumo);
+
+      // Opções de cor
+      const sModo = document.getElementById("m-modo");
+      if (!outros && modo !== "vencedor" && !PRINCIPAIS.includes(modo)) modo = "vencedor";
+      if (C.status === "ok") {
+        const vis = C.data.filter(c => outros || PRINCIPAIS.includes(c.nr));
+        sModo.replaceChildren(new Option("Mais votado na seção", "vencedor"),
+          ...vis.map(c => new Option("Percentual de " + c.nome, c.nr)));
+      }
+      sModo.value = modo;
+
+      // Legenda
+      const leg = document.getElementById("m-leg");
+      leg.textContent = "";
+      if (T.status === "ok") {
+        const fixos = ["95", "96"];
+        const ordem = [...Tm].sort((a, b) => fixos.includes(a.nr) - fixos.includes(b.nr) || b.votos - a.votos);
+        if (modo === "vencedor") {
+          for (const c of ordem.filter(c => outros || PRINCIPAIS.includes(c.nr))) {
+            const b = document.createElement("button");
+            b.className = "sx-leg-btn"; b.type = "button";
+            b.setAttribute("aria-pressed", "false");
+            b.title = "Colorir pelo percentual de " + c.nome;
+            const i = document.createElement("i"); i.style.background = corDe(c.nr);
+            b.append(i, `${c.nome} · ${fN(c.vencidas)}`);
+            b.addEventListener("click", () => { modo = c.nr; drawMapa(); });
+            leg.appendChild(b);
+          }
+          const bo = document.createElement("button");
+          bo.className = "sx-leg-btn sx-outros"; bo.type = "button";
+          bo.setAttribute("aria-expanded", outros ? "true" : "false");
+          if (outros) bo.textContent = "Recolher outros ▴";
+          else {
+            const i = document.createElement("i"); i.style.background = COR_OUTROS;
+            const n = d3.sum(ordem.filter(c => !PRINCIPAIS.includes(c.nr)), c => c.vencidas);
+            bo.append(i, `Outros · ${fN(n)} ▾`);
+          }
+          bo.addEventListener("click", () => { outros = !outros; drawMapa(); });
+          leg.appendChild(bo);
+          const n = document.createElement("span");
+          n.textContent = "Número após o nome: seções em que foi o mais votado.";
+          leg.appendChild(n);
+        }
+      } else if (T.status === "error") fail(leg);
+
+      // Mapa
+      if (V.status !== "ok" || U.status !== "ok" || C.status !== "ok") {
+        if (V.status === "error" || U.status === "error" || C.status === "error") fail(el); else aguarda(el);
+        return;
+      }
+      el.classList.remove("dash-skeleton");
+      el.textContent = "";
+      const cands = C.data;
+      const W = Math.max(280, el.clientWidth);
+      const H = Math.round(Math.min(760, Math.max(420, W * 0.95)));
+      if (W !== ultimoW) { zt = d3.zoomIdentity; ultimoW = W; }
+
+      const feats = feicoes(U.data);
+      // O d3 do dashboard não traz d3-geo: projeção plana (lon, lat) ajustada à caixa, suficiente na escala do Brasil
+      const aneis = f => f.geometry.coordinates.flat();
+      const caixa = fs => {
+        const xs = [], ys = [];
+        for (const f of fs) for (const a of aneis(f)) for (const [x, y] of a) { xs.push(x); ys.push(y); }
+        return [[d3.min(xs), d3.min(ys)], [d3.max(xs), d3.max(ys)]];
+      };
+      const [[lon0, lat0], [lon1, lat1]] = caixa(feats);
+      const esc = Math.min((W - 20) / (lon1 - lon0), (H - 20) / (lat1 - lat0));
+      const ox = (W - esc * (lon1 - lon0)) / 2, oy = (H - esc * (lat1 - lat0)) / 2;
+      const proj = ([lon, lat]) => [ox + (lon - lon0) * esc, oy + (lat1 - lat) * esc];
+      const path = f => aneis(f).map(a => "M" + a.map(c => proj(c).map(v => v.toFixed(1)).join(",")).join("L") + "Z").join("");
+      path.bounds = f => { const [[a0, b0], [a1, b1]] = caixa([f]); return [proj([a0, b1]), proj([a1, b0])]; };
+
+      // Pontos: posição do turno escolhido, com a do outro turno quando faltar
+      const outro = turno === "2t" ? "1t" : "2t";
+      const pts = [];
+      for (const r of V.data) {
+        if (r.uf === "ZZ") continue;
+        if (motivoSel !== "Todas" && r.motivo !== motivoSel) continue;
+        let lat = num(r["lat_" + turno]), lon = num(r["lon_" + turno]), aprox = false;
+        if (lat === null || lon === null) { lat = num(r["lat_" + outro]); lon = num(r["lon_" + outro]); aprox = true; }
+        if (lat === null || lon === null) continue;
+        const [x, y] = proj([lon, lat]);
+        const a = num(r.lat_1t) !== null && num(r.lon_1t) !== null ? proj([num(r.lon_1t), num(r.lat_1t)]) : null;
+        const b = num(r.lat_2t) !== null && num(r.lon_2t) !== null ? proj([num(r.lon_2t), num(r.lat_2t)]) : null;
+        pts.push({ r, x, y, aprox, a, b, venc: vencedor(r, cands) });
+      }
+      // Seções no mesmo local: espalhadas numa espiral em pixels, que não muda com o zoom
+      const grupos = d3.group(pts, p => p.x.toFixed(2) + "," + p.y.toFixed(2));
+      for (const g of grupos.values()) g.forEach((p, i) => {
+        p.dx = 3.6 * Math.sqrt(i) * Math.cos(i * 2.39996);
+        p.dy = 3.6 * Math.sqrt(i) * Math.sin(i * 2.39996);
+      });
+
+      const muted = getComputedStyle(el).getPropertyValue("--cds-chart-muted").trim() || "#cccccc";
+      let cor;
+      if (modo === "vencedor") cor = p => outros || PRINCIPAIS.includes(p.venc) ? corDe(p.venc) : COR_OUTROS;
+      else {
+        const share = p => Number(p.r.total) ? Number(p.r["v" + modo]) / Number(p.r.total) : 0;
+        const max = d3.max(pts, share) || 1;
+        const ramp = d3.interpolateRgb(muted, corDe(modo));
+        cor = p => ramp(share(p) / max);
+        const nome = (cands.find(c => c.nr === modo) || {}).nome || modo;
+        const b = document.createElement("button");
+        b.className = "sx-leg-btn"; b.type = "button"; b.setAttribute("aria-pressed", "true");
+        b.textContent = "← Mais votado";
+        b.addEventListener("click", () => { modo = "vencedor"; drawMapa(); });
+        const rampa = document.createElement("i");
+        rampa.className = "sx-ramp";
+        rampa.style.background = `linear-gradient(to right, ${ramp(0)}, ${ramp(1)})`;
+        const s = document.createElement("span");
+        s.append(`Percentual de ${nome}: 0%`, rampa, fP(max));
+        leg.append(b, s);
+      }
+
+      fixo = null;
+      const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("height", H)
+        .attr("role", "img").attr("aria-label", "Mapa do Brasil com as seções alteradas");
+      const base = svg.append("g");
+      const states = base.selectAll("path").data(feats).join("path").attr("d", path)
+        .attr("vector-effect", "non-scaling-stroke").style("cursor", "pointer")
+        .style("fill", "var(--color-panel)").style("stroke", "var(--color-border-line)").style("stroke-width", 1);
+      const gl = svg.append("g").style("display", linhas ? null : "none");
+      const ligacoes = pts.filter(p => p.a && p.b && (Math.abs(p.a[0] - p.b[0]) + Math.abs(p.a[1] - p.b[1]) > 1e-6));
+      const ls = gl.selectAll("line").data(ligacoes).join("line")
+        .style("stroke", "var(--color-fg-muted)").style("stroke-opacity", .55).style("stroke-width", 1);
+      const gp = svg.append("g");
+      const dots = gp.selectAll("circle").data(pts).join("circle").attr("r", 3.4)
+        .style("fill", cor).style("stroke", "var(--color-bg)").style("stroke-width", .8).style("cursor", "pointer");
+
+      const tip = d3.select(el).append("div").attr("class", "sx-tip sx-tip-wrap").attr("hidden", true);
+      const regiao = d3.select(el).append("div").attr("class", "sx-regiao").attr("id", "m-regiao").attr("aria-live", "polite");
+      const voltar = d3.select(el).append("button").attr("class", "sx-btn sx-voltar").attr("type", "button")
+        .attr("id", "m-voltar").attr("aria-label", "Voltar para o Brasil inteiro").text("← Brasil");
+      let aberto = null;
+
+      function mostra(p) {
+        aberto = p;
+        const r = p.r;
+        tip.attr("hidden", null).html("");
+        tip.append("div").attr("class", "sx-tip-h").text(`${r.municipio} – ${r.uf} · zona ${r.zona}, seção ${r.secao}`);
+        tip.append("div").text(`Mudou: ${r.motivo === "Local" ? "de local" : "só o endereço"}`);
+        for (const [t, lk, ek] of [["1º turno", "local_1t", "endereco_1t"], ["2º turno", "local_2t", "endereco_2t"]]) {
+          const d = tip.append("div");
+          d.append("b").text(t + ": ");
+          d.append("span").text(r[lk] || "—");
+          if (r[ek]) tip.append("div").attr("class", "sx-end").text(r[ek]);
+        }
+        if (p.aprox) tip.append("div").attr("class", "sx-end").text(`Sem coordenada no ${turno === "2t" ? "2º" : "1º"} turno: ponto no local do outro turno.`);
+        const tot = Number(r.total);
+        let linhasC = cands.map(c => ({ nr: c.nr, nome: c.nome, cor: corDe(c.nr), v: Number(r["v" + c.nr]) }));
+        if (!outros) {
+          const resto = linhasC.filter(d => !PRINCIPAIS.includes(d.nr));
+          linhasC = linhasC.filter(d => PRINCIPAIS.includes(d.nr));
+          linhasC.push({ nr: "outros", nome: "Outros (com brancos e nulos)", cor: COR_OUTROS, v: d3.sum(resto, d => d.v) });
+        }
+        linhasC = linhasC.filter(d => d.v > 0 || PRINCIPAIS.includes(d.nr)).sort((a, b) => b.v - a.v);
+        const tb = tip.append("table");
+        for (const d of linhasC) {
+          const tr = tb.append("tr");
+          const td = tr.append("td");
+          td.append("span").attr("class", "sx-sw").style("background", d.cor);
+          td.append("span").text(d.nome);
+          tr.append("td").attr("class", "num").text(fN(d.v));
+          tr.append("td").attr("class", "num").text(tot ? fP(d.v / tot) : "—");
+        }
+        const tr = tb.append("tr");
+        tr.append("td").append("b").text("Total");
+        tr.append("td").attr("class", "num").append("b").text(fN(tot));
+        tr.append("td");
+        dots.style("stroke", d => d === p ? "var(--color-fg)" : "var(--color-bg)").style("stroke-width", d => d === p ? 1.6 : .8);
+        coloca();
+      }
+      // O detalhe acompanha o ponto durante o zoom
+      function coloca() {
+        if (!aberto) return;
+        const tn = tip.node(), tw = tn.offsetWidth, th = tn.offsetHeight;
+        const mx = zt.applyX(aberto.x) + aberto.dx, my = zt.applyY(aberto.y) + aberto.dy;
+        const left = Math.min(Math.max(4, mx + 12), el.clientWidth - tw - 4);
+        const top = my + 12 + th > el.clientHeight ? Math.max(4, my - th - 12) : my + 12;
+        tip.style("left", left + "px").style("top", top + "px");
+      }
+      function esconde() {
+        aberto = null; fixo = null;
+        tip.attr("hidden", true);
+        dots.style("stroke", "var(--color-bg)").style("stroke-width", .8);
+      }
+
+      function posiciona() {
+        base.attr("transform", zt);
+        dots.attr("cx", p => zt.applyX(p.x) + p.dx).attr("cy", p => zt.applyY(p.y) + p.dy);
+        ls.attr("x1", p => zt.applyX(p.a[0])).attr("y1", p => zt.applyY(p.a[1]))
+          .attr("x2", p => zt.applyX(p.b[0])).attr("y2", p => zt.applyY(p.b[1]));
+        coloca();
+      }
+      const zoom = d3.zoom().scaleExtent([1, 80]).translateExtent([[0, 0], [W, H]])
+        .filter(ev => ev.type === "wheel" ? (ev.ctrlKey || ev.metaKey) : !ev.button)
+        .on("zoom", ev => { zt = ev.transform; posiciona(); });
+      svg.call(zoom).on("dblclick.zoom", null);
+      svg.call(zoom.transform, zt);
+      posiciona();
+
+      const dur = reduz ? 0 : 600;
+      const nomeUf = new Map(feats.map(f => [f.properties.uf, f.properties.nome]));
+      function zoomUf(uf) {
+        const f = feats.find(d => d.properties.uf === uf);
+        if (!f) { svg.transition().duration(dur).call(zoom.transform, d3.zoomIdentity); return; }
+        const [[x0, y0], [x1, y1]] = path.bounds(f);
+        const k = Math.min(80, 0.85 / Math.max((x1 - x0) / W, (y1 - y0) / H));
+        svg.transition().duration(dur).call(zoom.transform,
+          d3.zoomIdentity.translate(W / 2, H / 2).scale(k).translate(-(x0 + x1) / 2, -(y0 + y1) / 2));
+      }
+      // Destaca a UF selecionada, apaga os pontos das outras e escreve o nome no canto
+      function realca() {
+        const sel = f => f.properties.uf === ufSel;
+        states.style("stroke", f => sel(f) ? "var(--color-fg)" : "var(--color-border-line)")
+          .style("stroke-width", f => sel(f) ? 1.5 : 1);
+        if (ufSel) states.filter(sel).raise();
+        dots.style("opacity", p => !ufSel || p.r.uf === ufSel ? 1 : .2);
+        ls.style("opacity", p => !ufSel || p.r.uf === ufSel ? 1 : .2);
+        regiao.selectAll("*").remove();
+        if (ufSel && nomeUf.has(ufSel)) {
+          regiao.append("span").attr("data-source", "ufs").attr("data-field", "nome")
+            .attr("data-where", "uf=" + encodeURIComponent(ufSel)).text(nomeUf.get(ufSel));
+        } else regiao.append("span").text("Brasil");
+        document.getElementById("m-uf").value = ufSel;
+        voltar.attr("hidden", ufSel ? null : true);
+      }
+      function selUf(uf) {
+        ufSel = uf || "";
+        realca();
+        zoomUf(ufSel);
+      }
+      window.sxSelUf = selUf;
+
+      dots.on("mouseenter", (ev, p) => { if (!fixo) mostra(p); })
+        .on("mouseleave", () => { if (!fixo) esconde(); })
+        .on("click", (ev, p) => {
+          ev.stopPropagation();
+          if (p.r.uf !== ufSel) selUf(p.r.uf);
+          mostra(p); fixo = p;
+        });
+      states.on("click", (ev, f) => { ev.stopPropagation(); esconde(); selUf(f.properties.uf); });
+      // Clique fora dos estados: volta ao Brasil inteiro
+      svg.on("click", () => { esconde(); if (ufSel) selUf(""); });
+      voltar.on("click", ev => { ev.stopPropagation(); esconde(); selUf(""); });
+
+      const zb = d3.select(el).append("div").attr("class", "sx-zoom");
+      const botoes = [
+        ["+", "Aproximar", () => svg.transition().duration(reduz ? 0 : 250).call(zoom.scaleBy, 2)],
+        ["−", "Afastar", () => svg.transition().duration(reduz ? 0 : 250).call(zoom.scaleBy, .5)]
+      ];
+      for (const [t, lab, f] of botoes)
+        zb.append("button").attr("class", "sx-btn").attr("type", "button").attr("aria-label", lab).attr("title", lab).text(t)
+          .on("click", ev => { ev.stopPropagation(); f(); });
+
+      // Todas as UFs, pelo nome
+      const sUf = document.getElementById("m-uf");
+      if (sUf.options.length === 1) {
+        const ordem = [...feats].sort((a, b) => a.properties.nome.localeCompare(b.properties.nome, "pt-BR"));
+        for (const f of ordem) sUf.add(new Option(f.properties.nome, f.properties.uf));
+      }
+      realca();
+
+      // Barras por candidato
+      const bx = document.getElementById("m-barras");
+      if (T.status === "ok") barras(bx, [...Tm].sort((a, b) => b.votos - a.votos));
+      else if (T.status === "error") fail(bx); else aguarda(bx);
+    }
+
+    function barras(el, rows) {
+      el.textContent = "";
+      el.classList.remove("dash-skeleton");
+      const W = Math.max(280, el.clientWidth), bh = 16, gap = 8;
+      const H = rows.length * (bh + gap) + 8;
+      const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("height", H);
+      const meas = svg.append("text").attr("font-size", 12).attr("visibility", "hidden");
+      const tw = s => { meas.text(s); return meas.node().getComputedTextLength(); };
+      // Nomes longos são cortados para caber em até 45% da largura
+      const maxL = W * 0.45;
+      const rotulo = s => {
+        if (tw(s) <= maxL) return s;
+        let t = s;
+        while (t.length > 3 && tw(t + "…") > maxL) t = t.slice(0, -1);
+        return t + "…";
+      };
+      rows = rows.map(r => ({ ...r, rot: rotulo(r.nome), fim: `${fN(r.votos)} · ${fP(r.pct)}` }));
+      const left = d3.max(rows, r => tw(r.rot)) + 10;
+      const right = d3.max(rows, r => tw(r.fim)) + 12;
+      meas.remove();
+      const x = d3.scaleLinear([0, d3.max(rows, r => r.votos) || 1], [left, W - right]);
+      const y = d3.scaleBand(rows.map(r => r.nr), [4, H - 4]).paddingInner(gap / (bh + gap));
+      const g = svg.selectAll("g").data(rows).join("g").attr("transform", r => `translate(0,${y(r.nr)})`);
+      g.append("title").text(r => r.nome);
+      g.append("text").attr("x", left - 8).attr("y", y.bandwidth() / 2).attr("dy", "0.35em").attr("text-anchor", "end")
+        .attr("font-size", 12).style("fill", "var(--color-fg-muted)").text(r => r.rot);
+      g.append("rect").attr("x", left).attr("y", 0).attr("height", y.bandwidth()).attr("rx", 4)
+        .attr("width", r => Math.max(1, x(r.votos) - left)).style("fill", r => corDe(r.nr));
+      g.append("text").attr("x", r => x(r.votos) + 6).attr("y", y.bandwidth() / 2).attr("dy", "0.35em")
+        .attr("font-size", 12).style("fill", "var(--color-fg)").style("font-variant-numeric", "tabular-nums").text(r => r.fim);
+    }
+
+    window.sxInitMapa = initMapa;
+    window.sxDrawMapa = drawMapa;
+    dash.onData(() => drawMapa());
+  })();
+</script>
+
+<script>
+  (() => {
+    const { n: fN } = window.sxFmt;
+    const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const COR = dash.colors[0];
+    // Cada UF tem a própria fonte (agreg_XX), todas com o mesmo schema; só a escolhida é lida
+    const fonte = uf => "agreg_" + uf;
+
+    let ufSel = "", munSel = "", zt = d3.zoomIdentity, ultimo = "", fixo = null, geoCache = null;
+
+    function fail(el) {
+      el.textContent = "";
+      const d = document.createElement("div");
+      d.className = "sx-fail"; d.textContent = "Failed to load";
+      el.appendChild(d);
+    }
+
+    function feicoes(rows) {
+      if (geoCache && geoCache.rows === rows) return geoCache.feats;
+      const feats = rows.map(r => ({
+        uf: r.uf, nome: r.nome,
+        aneis: (typeof r.geometria === "string" ? JSON.parse(r.geometria) : r.geometria).flat()
+      }));
+      geoCache = { rows, feats };
+      return feats;
+    }
+    const caixa = pontos => [[d3.min(pontos, p => p[0]), d3.min(pontos, p => p[1])], [d3.max(pontos, p => p[0]), d3.max(pontos, p => p[1])]];
+
+    function initAgreg() {
+      const sUf = document.getElementById("ag-uf"), sMun = document.getElementById("ag-mun");
+      const busca = document.getElementById("ag-busca");
+      sUf.addEventListener("change", () => {
+        ufSel = sUf.value; munSel = ""; fixo = null; busca.value = "";
+        drawAgreg();
+      });
+      sMun.addEventListener("change", () => { munSel = sMun.value; fixo = null; drawAgreg(); });
+      busca.addEventListener("input", () => tabela());
+    }
+
+    function linhasUf() {
+      if (!ufSel) return null;
+      const st = dash.data(fonte(ufSel));
+      return st.status === "ok" ? st.data : null;
+    }
+
+    function tabela() {
+      const tbody = document.querySelector("#ag-tabela tbody");
+      const cont = document.getElementById("ag-contagem");
+      if (!tbody) return;
+      tbody.textContent = "";
+      const rows = linhasUf();
+      if (!rows) { cont.textContent = ""; return; }
+      const q = document.getElementById("ag-busca").value.trim().toLocaleLowerCase("pt-BR");
+      let vis = munSel ? rows.filter(r => r.cd_municipio === munSel) : rows;
+      if (q) vis = vis.filter(r => [r.municipio, r.local, r.endereco, r.bairro, r.zona, r.secao].join(" ").toLocaleLowerCase("pt-BR").includes(q));
+      cont.textContent = `${fN(vis.length)} de ${fN(rows.length)} seções agregadas`;
+      const frag = document.createDocumentFragment();
+      for (const r of vis) {
+        const tr = document.createElement("tr");
+        tr.dataset.key = [r.cd_municipio, r.zona, r.secao].map(v => encodeURIComponent(String(v))).join(",");
+        for (const [v, c] of [[r.municipio], [r.zona, "num"], [r.secao, "num"], [r.secao_principal ?? "—", "num"], [r.local ?? "—", "sx-hide-narrow"], [fN(Number(r.eleitores)), "num"]]) {
+          const td = document.createElement("td");
+          td.textContent = v;
+          if (c) td.className = c;
+          tr.appendChild(td);
+        }
+        if (r.endereco) tr.cells[4].title = r.endereco;
+        frag.appendChild(tr);
+      }
+      tbody.appendChild(frag);
+    }
+
+    function drawAgreg() {
+      const pg = document.getElementById("agregadas");
+      const el = document.getElementById("ag-mapa");
+      if (!el || pg.hidden) return;
+      const U = dash.data("ufs"), P = dash.data("por_uf");
+      const sUf = document.getElementById("ag-uf"), sMun = document.getElementById("ag-mun");
+      const resumo = document.getElementById("ag-resumo");
+      const tab = document.getElementById("ag-tabela");
+
+      // Lista de UFs pelo nome
+      if (U.status === "ok" && sUf.options.length === 1) {
+        for (const r of [...U.data].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))) sUf.add(new Option(r.nome, r.uf));
+      }
+      sUf.value = ufSel;
+
+      // Só a fonte da UF escolhida é marcada (e, portanto, carregada)
+      el.dataset.source = ufSel ? `ufs ${fonte(ufSel)}` : "ufs";
+      if (ufSel) tab.dataset.source = fonte(ufSel); else delete tab.dataset.source;
+
+      const nomeUf = U.status === "ok" ? (U.data.find(r => r.uf === ufSel) || {}).nome : null;
+
+      // Resumo a partir dos totais por UF
+      const pu = P.status === "ok" && ufSel ? P.data.find(r => r.uf === ufSel) : null;
+      if (!ufSel) resumo.textContent = "Escolha uma UF para carregar as seções agregadas dela.";
+      else if (pu) {
+        const w = "uf=" + encodeURIComponent(ufSel);
+        const mk = (field, txt) => {
+          const s = document.createElement("span");
+          s.dataset.source = "por_uf"; s.dataset.field = field; s.dataset.where = w; s.textContent = txt;
+          return s;
+        };
+        resumo.textContent = "";
+        resumo.append(
+          `${nomeUf || ufSel} teve `, mk("agregadas", fN(Number(pu.agregadas))), " seções agregadas no 1º turno, com ",
+          mk("eleitores_agregadas", fN(Number(pu.eleitores_agregadas))), " eleitores, de um total de ",
+          mk("secoes_uf", fN(Number(pu.secoes_uf))), " seções na UF."
+        );
+      } else if (P.status === "error") fail(resumo);
+
+      const st = ufSel ? dash.data(fonte(ufSel)) : null;
+      const rows = st && st.status === "ok" ? st.data : null;
+
+      // Municípios da UF carregada
+      if (rows) {
+        const muns = [...d3.rollup(rows, v => v[0].municipio, r => r.cd_municipio)].sort((a, b) => a[1].localeCompare(b[1], "pt-BR"));
+        if (sMun.dataset.uf !== ufSel) {
+          sMun.replaceChildren(new Option("Todos", ""), ...muns.map(([cd, nome]) => new Option(nome, cd)));
+          sMun.dataset.uf = ufSel;
+        }
+        sMun.disabled = false;
+      } else {
+        sMun.replaceChildren(new Option("Todos", ""));
+        sMun.dataset.uf = "";
+        sMun.disabled = true;
+      }
+      sMun.value = munSel;
+
+      tabela();
+
+      // Mapa
+      el.textContent = "";
+      if (!ufSel) {
+        el.classList.remove("dash-skeleton");
+        const d = document.createElement("div");
+        d.className = "sx-vazio"; d.textContent = "Escolha uma UF acima para ver o mapa.";
+        el.appendChild(d);
+        return;
+      }
+      if (U.status === "error" || (st && st.status === "error")) { el.classList.remove("dash-skeleton"); fail(el); return; }
+      if (U.status !== "ok" || !rows) { el.classList.add("dash-skeleton"); return; }
+      el.classList.remove("dash-skeleton");
+
+      const W = Math.max(280, el.clientWidth);
+      const H = Math.round(Math.min(720, Math.max(400, W * 0.8)));
+      const chave = `${ufSel}|${munSel}|${W}`;
+      if (chave !== ultimo) { zt = d3.zoomIdentity; ultimo = chave; }
+
+      const feats = feicoes(U.data);
+      const fUf = feats.find(f => f.uf === ufSel);
+      const comCoord = rows.filter(r => r.lat != null && r.lon != null);
+      const foco = munSel ? comCoord.filter(r => r.cd_municipio === munSel).map(r => [r.lon, r.lat]) : [];
+      // Enquadra a UF (ou os pontos do município escolhido), com folga, numa projeção plana
+      let [[x0, y0], [x1, y1]] = foco.length ? caixa(foco) : caixa(fUf ? fUf.aneis.flat() : comCoord.map(r => [r.lon, r.lat]));
+      const folga = Math.max(x1 - x0, y1 - y0, 0.05) * (foco.length ? 0.25 : 0.04);
+      x0 -= folga; x1 += folga; y0 -= folga; y1 += folga;
+      const esc = Math.min((W - 20) / (x1 - x0), (H - 20) / (y1 - y0));
+      const ox = (W - esc * (x1 - x0)) / 2, oy = (H - esc * (y1 - y0)) / 2;
+      const proj = ([lon, lat]) => [ox + (lon - x0) * esc, oy + (y1 - lat) * esc];
+      const path = f => f.aneis.map(a => "M" + a.map(c => proj(c).map(v => v.toFixed(1)).join(",")).join("L") + "Z").join("");
+
+      const pts = comCoord.map(r => { const [x, y] = proj([r.lon, r.lat]); return { r, x, y }; });
+      const grupos = d3.group(pts, p => p.x.toFixed(2) + "," + p.y.toFixed(2));
+      for (const g of grupos.values()) g.forEach((p, i) => {
+        p.dx = 3.4 * Math.sqrt(i) * Math.cos(i * 2.39996);
+        p.dy = 3.4 * Math.sqrt(i) * Math.sin(i * 2.39996);
+      });
+
+      fixo = null;
+      const svg = d3.select(el).append("svg").attr("width", "100%").attr("viewBox", `0 0 ${W} ${H}`).attr("height", H)
+        .attr("role", "img").attr("aria-label", `Mapa das seções agregadas em ${nomeUf || ufSel}`);
+      const base = svg.append("g");
+      base.selectAll("path").data(feats).join("path").attr("d", path).attr("vector-effect", "non-scaling-stroke")
+        .style("fill", f => f.uf === ufSel ? "var(--color-panel)" : "var(--color-bg)")
+        .style("stroke", f => f.uf === ufSel ? "var(--color-fg-muted)" : "var(--color-border-line)")
+        .style("stroke-width", f => f.uf === ufSel ? 1.4 : 1);
+      if (fUf) base.selectAll("path").filter(f => f === fUf).raise();
+      const dots = svg.append("g").selectAll("circle").data(pts).join("circle").attr("r", 3.2)
+        .style("fill", COR).style("stroke", "var(--color-bg)").style("stroke-width", .8).style("cursor", "pointer")
+        .style("opacity", p => !munSel || p.r.cd_municipio === munSel ? 1 : .2);
+
+      const regiao = d3.select(el).append("div").attr("class", "sx-regiao").attr("aria-live", "polite");
+      regiao.append("span").attr("data-source", "ufs").attr("data-field", "nome")
+        .attr("data-where", "uf=" + encodeURIComponent(ufSel)).text(nomeUf || ufSel);
+      if (munSel) regiao.append("div").attr("class", "sx-regiao-sub").text(sMun.selectedOptions[0] ? sMun.selectedOptions[0].text : "");
+
+      const semCoord = rows.length - comCoord.length;
+      if (semCoord) d3.select(el).append("div").attr("class", "sx-map-nota")
+        .text(`${fN(semCoord)} de ${fN(rows.length)} seções sem coordenada no cadastro não aparecem no mapa.`);
+
+      const tip = d3.select(el).append("div").attr("class", "sx-tip sx-tip-wrap").attr("hidden", true);
+      let aberto = null;
+      function coloca() {
+        if (!aberto) return;
+        const tn = tip.node(), tw = tn.offsetWidth, th = tn.offsetHeight;
+        const mx = zt.applyX(aberto.x) + aberto.dx, my = zt.applyY(aberto.y) + aberto.dy;
+        tip.style("left", Math.min(Math.max(4, mx + 12), el.clientWidth - tw - 4) + "px")
+          .style("top", (my + 12 + th > el.clientHeight ? Math.max(4, my - th - 12) : my + 12) + "px");
+      }
+      function mostra(p) {
+        aberto = p;
+        const r = p.r;
+        tip.attr("hidden", null).html("");
+        tip.append("div").attr("class", "sx-tip-h").text(`${r.municipio} · zona ${r.zona}, seção ${r.secao}`);
+        tip.append("div").text(r.secao_principal != null ? `Agregada à seção ${r.secao_principal}` : "Seção principal não informada");
+        tip.append("div").append("b").text(r.local || "Local não informado");
+        const end = [r.endereco, r.bairro, r.cep ? "CEP " + r.cep : null].filter(Boolean).join(" — ");
+        if (end) tip.append("div").attr("class", "sx-end").text(end);
+        tip.append("div").text(`${fN(Number(r.eleitores))} eleitores`);
+        dots.style("stroke", d => d === p ? "var(--color-fg)" : "var(--color-bg)").style("stroke-width", d => d === p ? 1.6 : .8);
+        coloca();
+      }
+      function esconde() {
+        aberto = null; fixo = null;
+        tip.attr("hidden", true);
+        dots.style("stroke", "var(--color-bg)").style("stroke-width", .8);
+      }
+      dots.on("mouseenter", (ev, p) => { if (!fixo) mostra(p); })
+        .on("mouseleave", () => { if (!fixo) esconde(); })
+        .on("click", (ev, p) => { ev.stopPropagation(); mostra(p); fixo = p; });
+      svg.on("click", () => esconde());
+
+      function posiciona() {
+        base.attr("transform", zt);
+        dots.attr("cx", p => zt.applyX(p.x) + p.dx).attr("cy", p => zt.applyY(p.y) + p.dy);
+        coloca();
+      }
+      const zoom = d3.zoom().scaleExtent([1, 60]).translateExtent([[0, 0], [W, H]])
+        .filter(ev => ev.type === "wheel" ? (ev.ctrlKey || ev.metaKey) : !ev.button)
+        .on("zoom", ev => { zt = ev.transform; posiciona(); });
+      svg.call(zoom).on("dblclick.zoom", null);
+      svg.call(zoom.transform, zt);
+      posiciona();
+
+      const zb = d3.select(el).append("div").attr("class", "sx-zoom");
+      const botoes = [
+        ["+", "Aproximar", () => svg.transition().duration(reduz ? 0 : 250).call(zoom.scaleBy, 2)],
+        ["−", "Afastar", () => svg.transition().duration(reduz ? 0 : 250).call(zoom.scaleBy, .5)],
+        ["⟲", "Enquadrar de novo", () => svg.transition().duration(reduz ? 0 : 400).call(zoom.transform, d3.zoomIdentity)]
+      ];
+      for (const [t, lab, f] of botoes)
+        zb.append("button").attr("class", "sx-btn").attr("type", "button").attr("aria-label", lab).attr("title", lab).text(t)
+          .on("click", ev => { ev.stopPropagation(); f(); });
+    }
+
+    window.sxInitAgreg = initAgreg;
+    window.sxDrawAgreg = drawAgreg;
+    dash.onData(() => drawAgreg());
+  })();
+</script>
+
+<script>
+  (() => {
+    const tabs = document.querySelectorAll(".sx-tab");
+    // Páginas em <template> só entram no documento (e leem seus dados) quando abertas
+    const PAGINAS = {
+      geral: { draw: "sxDrawGeral" },
+      mapa: { tpl: "tpl-mapa", init: "sxInitMapa", draw: "sxDrawMapa" },
+      agregadas: { tpl: "tpl-agreg", init: "sxInitAgreg", draw: "sxDrawAgreg" },
+      origem: {}
+    };
+    function mostra(id, link) {
+      for (const t of tabs) {
+        const on = t.dataset.pg === id;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        document.getElementById(t.dataset.pg).hidden = !on;
+      }
+      const pg = PAGINAS[id], box = document.getElementById(id);
+      if (pg.tpl && !box.childElementCount) {
+        box.appendChild(document.getElementById(pg.tpl).content.cloneNode(true));
+        window[pg.init]();
+      }
+      if (link) dash.setLink(id);
+      if (pg.draw) window[pg.draw]();
+    }
+    tabs.forEach(t => t.addEventListener("click", () => mostra(t.dataset.pg, true)));
+    const h = location.hash.slice(1);
+    if (h in PAGINAS && h !== "geral") mostra(h, false);
+  })();
+</script>
+
+<script>
+  // Freeze temporal: o painel sempre mostra a coleta mais recente registrada em freezes.csv
+  const fmtColeta = (iso) => {
+    const [d, h] = iso.slice(0, 16).split("T");
+    const [a, m, dia] = d.split("-");
+    return `${dia}/${m}/${a} às ${h.replace(":", "h")}`;
+  };
+
+  dash.calc("ultimo_freeze", {
+    inputs: ["freezes"],
+    title: "Freeze selecionado",
+    description: "A coleta da lista oficial escolhida no seletor do topo (por padrão, a mais recente).",
+    fn: (freezes) => {
+      const ult = freezes.find(f => f.freeze === dash.freeze());
+      const quando = (s) => s ? s.slice(0, 16).replace(" ", " às ") : "data não informada";
+      return ult ? [{ freeze: ult.freeze, rotulo: fmtColeta(ult.coletado_em), lista_gerada_tse: quando(ult.lista_gerada_tse),
+                      secoes_alteradas: ult.secoes_alteradas, eleitorado_gerado_tse: quando(ult.eleitorado_gerado_tse) }] : [];
+    }
+  });
+
+  dash.onData(() => {
+    const u = dash.data("ultimo_freeze");
+    document.querySelectorAll('[data-source="ultimo_freeze"]').forEach(el => {
+      const r = u.status === "ok" ? u.data[0] : null;
+      el.textContent = r ? r[el.dataset.field] : "—";
+    });
+
+    const f = dash.data("freezes"), tb = document.querySelector("#tb-freezes tbody");
+    tb.textContent = "";
+    if (f.status !== "ok") return;
+    [...f.data].sort((a, b) => b.freeze.localeCompare(a.freeze)).forEach(r => {
+      const tr = document.createElement("tr");
+      [[r.freeze], [fmtColeta(r.coletado_em)], [r.lista_gerada_tse || "não informada"], [r.secoes_alteradas, "num"], [r.processado]].forEach(([v, c]) => {
+        const td = document.createElement("td"); td.textContent = v; if (c) td.className = c; tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  });
+</script>
+</main>
+</body>
+</html>
